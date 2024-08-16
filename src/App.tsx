@@ -1,7 +1,7 @@
 function App() {
   return (
     <>
-      <p>Vite</p>
+      <p>Vite:{process.env.VITE_SECRET_KEY}</p>
     </>
   );
 }

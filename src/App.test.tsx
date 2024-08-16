@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import App from "./App";
 
 /*
@@ -11,6 +11,8 @@ describe("サンプルテスト", () => {
     render(<App />);
 
     // 検証
-    expect(screen.getByText("Vite")).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText("Vite:SECRET_KEY_VALUE")).toBeInTheDocument();
+    });
   });
 });
