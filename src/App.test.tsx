@@ -12,7 +12,6 @@ describe("サンプルテスト", () => {
 
     // 検証
     waitFor(() => {
-      // expect(screen.getByText("Vite:SECRET_KEY_VALUE")).toBeInTheDocument();
     });
   });
 });
