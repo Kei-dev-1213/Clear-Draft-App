@@ -1,6 +1,5 @@
 import { FC, memo, useCallback, useEffect, useState } from "react";
 import * as UI from "@chakra-ui/react";
-import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
 import { GiArchiveRegister } from "react-icons/gi";
 
 import { useNavigate } from "react-router-dom";
@@ -9,10 +8,10 @@ import { CONSTANT } from "../../constant";
 import { SecondaryButton } from "../../components/ui/parts/SecondaryButton";
 import { DB } from "../../supabase";
 import { ArticleType } from "../../domain/Article";
-import { Util } from "../../util";
 import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { DeleteDialog } from "../../components/ui/articles/DeleteDialog";
+import { ArticleTable } from "../../components/ui/articles/ArticleTable";
 
 export const Articles: FC = memo(() => {
   // state
@@ -80,76 +79,8 @@ export const Articles: FC = memo(() => {
                 未投稿の下書きのみ表示
               </UI.FormLabel>
             </UI.FormControl>
-            <UI.TableContainer
-              h="100%"
-              mt={2}
-              overflowY="auto"
-              css={{
-                "&::-webkit-scrollbar": {
-                  display: "none",
-                },
-                msOverflowStyle: "none",
-                scrollbarWidth: "none",
-              }}
-            >
-              <UI.Table variant="simple">
-                <UI.Thead>
-                  <UI.Tr>
-                    <UI.Th w="80%" textAlign="center" fontSize={14}>
-                      記事
-                    </UI.Th>
-                    <UI.Th w="20%" textAlign="center" fontSize={14}>
-                      更新日時
-                    </UI.Th>
-                  </UI.Tr>
-                </UI.Thead>
-                <UI.Tbody>
-                  {articles
-                    .filter(({ posted }) => (draftOnly ? !posted === draftOnly : true))
-                    .map(({ id, title, tag, updated_at }) => (
-                      <UI.Tr key={id}>
-                        <UI.Td>
-                          <UI.Box
-                            position="relative"
-                            h="100px"
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                          >
-                            <UI.Text as="h2" fontWeight="600" mb={4}>
-                              {title}
-                            </UI.Text>
-                            <UI.UnorderedList display="flex" styleType="none" m={0} mt={4} gap={3}>
-                              {tag.split(" ").map((tag, index) => (
-                                <UI.ListItem
-                                  key={`${tag}-${index}`}
-                                  fontSize={15}
-                                  bg="gray.700"
-                                  color="#fff"
-                                  px={3}
-                                  py={1}
-                                  borderRadius={6}
-                                >
-                                  {tag}
-                                </UI.ListItem>
-                              ))}
-                            </UI.UnorderedList>
-                            <UI.Box display="flex" gap={3} position="absolute" bottom={0} right={0}>
-                              <SecondaryButton icon={FaEdit} color="green" onClick={() => navigate(`/article/${id}`)}>
-                                編集
-                              </SecondaryButton>
-                              <SecondaryButton icon={FaRegTrashAlt} color="red" onClick={() => onOpenDeleteModal(id)}>
-                                削除
-                              </SecondaryButton>
-                            </UI.Box>
-                          </UI.Box>
-                        </UI.Td>
-                        <UI.Td>{Util.formatDate(updated_at)}</UI.Td>
-                      </UI.Tr>
-                    ))}
-                </UI.Tbody>
-              </UI.Table>
-            </UI.TableContainer>
+
+            <ArticleTable articles={articles} onOpenDeleteModal={onOpenDeleteModal} draftOnly={draftOnly} />
           </UI.Box>
         )}
       </ContentWrapper>
