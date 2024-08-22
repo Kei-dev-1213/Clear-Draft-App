@@ -1,9 +1,9 @@
-import { FC, memo, useCallback, useEffect, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useState } from "react";
 import * as UI from "@chakra-ui/react";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
-import { FocusableElement } from "@chakra-ui/utils";
 import { GiArchiveRegister } from "react-icons/gi";
 
+import { useNavigate } from "react-router-dom";
 import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { CONSTANT } from "../../constant";
 import { SecondaryButton } from "../../components/ui/parts/SecondaryButton";
@@ -12,7 +12,7 @@ import { ArticleType } from "../../domain/Article";
 import { Util } from "../../util";
 import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
-import { useNavigate } from "react-router-dom";
+import { DeleteDialog } from "../../components/ui/articles/DeleteDialog";
 
 export const Articles: FC = memo(() => {
   // state
@@ -24,7 +24,6 @@ export const Articles: FC = memo(() => {
   // hooks
   const { displayMessage } = useMessage();
   const deleteModal = UI.useDisclosure();
-  const cancelRef = useRef<FocusableElement | null>(null);
   const navigate = useNavigate();
 
   // 初期処理
@@ -106,7 +105,7 @@ export const Articles: FC = memo(() => {
                 </UI.Thead>
                 <UI.Tbody>
                   {articles
-                    .filter(({ posted }) => (draftOnly ? posted === draftOnly : true))
+                    .filter(({ posted }) => (draftOnly ? !posted === draftOnly : true))
                     .map(({ id, title, tag, updated_at }) => (
                       <UI.Tr key={id}>
                         <UI.Td>
@@ -155,24 +154,7 @@ export const Articles: FC = memo(() => {
         )}
       </ContentWrapper>
 
-      <UI.AlertDialog isOpen={deleteModal.isOpen} leastDestructiveRef={cancelRef} onClose={deleteModal.onClose}>
-        <UI.AlertDialogOverlay>
-          <UI.AlertDialogContent>
-            <UI.AlertDialogHeader fontSize="lg" fontWeight="bold">
-              記事削除
-            </UI.AlertDialogHeader>
-
-            <UI.AlertDialogBody>選択した記事を削除します。よろしいですか？</UI.AlertDialogBody>
-
-            <UI.AlertDialogFooter>
-              <UI.Button colorScheme="red" onClick={deleteArticle} mr={3}>
-                削除
-              </UI.Button>
-              <UI.Button onClick={deleteModal.onClose}>Cancel</UI.Button>
-            </UI.AlertDialogFooter>
-          </UI.AlertDialogContent>
-        </UI.AlertDialogOverlay>
-      </UI.AlertDialog>
+      <DeleteDialog isOpen={deleteModal.isOpen} onClose={deleteModal.onClose} deleteArticle={deleteArticle} />
     </>
   );
 });
