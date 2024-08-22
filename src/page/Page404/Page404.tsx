@@ -1,19 +1,18 @@
-import { FC } from "react";
-import { Header } from "../../components/ui/header/Header";
-import { ContentCenterWrapper } from "../../components/ui/container/ContentCenterWrapper";
+import { FC, memo } from "react";
+import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { Text } from "@chakra-ui/react";
+import { CONSTANT } from "../../constant";
 
-export const Page404: FC = () => {
+export const Page404: FC = memo(() => {
   return (
     <>
-      <Header />
-      <ContentCenterWrapper w="1000px">
+      <ContentWrapper w={CONSTANT.CONTENT_WIDTH}>
         <Text letterSpacing={1} fontSize={20}>
           SORRY,
           <br />
           we couldn't find that page.
         </Text>
-      </ContentCenterWrapper>
+      </ContentWrapper>
     </>
   );
-};
+});

@@ -1,14 +1,15 @@
-import { FC, memo, useCallback } from "react";
+import { FC, memo, useCallback, useEffect } from "react";
 import * as UI from "@chakra-ui/react";
 import { FaLock } from "react-icons/fa";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { MdOutlineAppRegistration } from "react-icons/md";
 
-import { Header } from "../../components/ui/header/Header";
-import { Footer } from "../../components/ui/footer/Footer";
-import { ContentCenterWrapper } from "../../components/ui/container/ContentCenterWrapper";
+import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { DB } from "../../supabase";
 import { useMessage } from "../../hooks/useMessage";
 import { Util } from "../../util";
+import { CONSTANT } from "../../constant";
+import { PrimaryButton } from "../../components/ui/parts/PrimaryButton";
 
 export const Settings: FC = memo(() => {
   const {
@@ -21,6 +22,9 @@ export const Settings: FC = memo(() => {
   // hooks
   const { displayMessage } = useMessage();
 
+  // 初期処理
+  useEffect(() => reset({ token: "" }), []);
+
   // 登録
   const registQiitaAPIKey: SubmitHandler<{ token: string }> = useCallback(async ({ token }) => {
     await DB.registQiitaAPIKey(Util.encrypt(token));
@@ -30,9 +34,8 @@ export const Settings: FC = memo(() => {
 
   return (
     <>
-      <Header />
       <form onSubmit={handleSubmit(registQiitaAPIKey)}>
-        <ContentCenterWrapper w="1000px">
+        <ContentWrapper w={CONSTANT.CONTENT_WIDTH}>
           <UI.Flex w="100%" flexDirection="column">
             <UI.Flex w="100%">
               <UI.InputGroup>
@@ -46,9 +49,7 @@ export const Settings: FC = memo(() => {
                   px={2}
                 />
               </UI.InputGroup>
-              <UI.Button type="submit" px={8} colorScheme="gray">
-                登録
-              </UI.Button>
+              <PrimaryButton icon={MdOutlineAppRegistration}>登録</PrimaryButton>
             </UI.Flex>
             {errors.token && (
               <UI.Box as="p" role="alert" ml={12} color="red">
@@ -56,9 +57,8 @@ export const Settings: FC = memo(() => {
               </UI.Box>
             )}
           </UI.Flex>
-        </ContentCenterWrapper>
+        </ContentWrapper>
       </form>
-      <Footer />
     </>
   );
 });

@@ -3,6 +3,7 @@ import { FC, memo } from "react";
 import * as UI from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { CONSTANT } from "../../../constant";
+import { NavLinkText } from "../parts/NavLinkText";
 
 export const Header: FC = memo(() => {
   return (
@@ -12,14 +13,10 @@ export const Header: FC = memo(() => {
       </UI.Heading>
       <UI.Flex as="nav" gap={20} justifyContent="center" fontSize={16}>
         <Link to="/settings">
-          <UI.Text as="i" shadow="sm" _hover={{ opacity: 0.7 }}>
-            settings
-          </UI.Text>
+          <NavLinkText>settings</NavLinkText>
         </Link>
         <Link to="/articles">
-          <UI.Text as="i" shadow="sm" _hover={{ opacity: 0.7 }}>
-            articles
-          </UI.Text>
+          <NavLinkText>articles</NavLinkText>
         </Link>
       </UI.Flex>
     </UI.Box>
