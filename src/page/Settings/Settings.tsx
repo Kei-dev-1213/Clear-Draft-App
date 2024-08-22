@@ -35,7 +35,7 @@ export const Settings: FC = memo(() => {
   return (
     <>
       <form onSubmit={handleSubmit(registQiitaAPIKey)}>
-        <ContentWrapper w={CONSTANT.CONTENT_WIDTH}>
+        <ContentWrapper w={CONSTANT.CONTENT_WIDTH} align="center">
           <UI.Flex w="100%" flexDirection="column">
             <UI.Flex w="100%">
               <UI.InputGroup>

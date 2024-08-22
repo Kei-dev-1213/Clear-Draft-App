@@ -1,6 +1,28 @@
 import { createClient } from "@supabase/supabase-js";
+import { ArticleType } from "../domain/Article";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.VITE_SUPABASE_ANON_KEY!);
+
+// 記事一覧の取得
+const fetchAllArticles = async () => {
+  try {
+    const { data } = await supabase.from("articles").select("*").order("updated_at", { ascending: false });
+    return (data as Array<ArticleType>) || [];
+  } catch (e) {
+    console.error(e);
+    throw new Error("記事一覧の取得で不正なエラーが発生しました。");
+  }
+};
+
+// 記事削除
+const deleteArticle = async (id: string) => {
+  try {
+    await supabase.from("articles").delete().eq("id", id);
+  } catch (e) {
+    console.error(e);
+    throw new Error("記事の削除で不正なエラーが発生しました。");
+  }
+};
 
 // Qiita APIキーの更新
 const registQiitaAPIKey = async (token: string) => {
@@ -20,4 +42,6 @@ const registQiitaAPIKey = async (token: string) => {
 
 export const DB = {
   registQiitaAPIKey,
+  fetchAllArticles,
+  deleteArticle,
 };
