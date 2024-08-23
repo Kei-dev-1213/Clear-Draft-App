@@ -1,6 +1,5 @@
 import { FC, memo, useRef } from "react";
 import { FocusableElement } from "@chakra-ui/utils";
-
 import * as UI from "@chakra-ui/react";
 
 type Props = {

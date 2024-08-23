@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect } from "react";
+import { FC, memo, useCallback, useContext, useEffect } from "react";
 import * as UI from "@chakra-ui/react";
 import { FaLock } from "react-icons/fa";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -9,7 +9,8 @@ import { DB } from "../../supabase";
 import { useMessage } from "../../hooks/useMessage";
 import { Util } from "../../util";
 import { CONSTANT } from "../../constant";
-import { PrimaryButton } from "../../components/ui/parts/PrimaryButton";
+import { LoadingContext } from "../../context/LoadingProvider";
+import { CustomButton } from "../../components/ui/parts/CustomButton";
 
 export const Settings: FC = memo(() => {
   const {
@@ -19,6 +20,9 @@ export const Settings: FC = memo(() => {
     reset,
   } = useForm<{ token: string }>();
 
+  // context
+  const { setIsLoadingOverlay } = useContext(LoadingContext);
+
   // hooks
   const { displayMessage } = useMessage();
 
@@ -27,8 +31,10 @@ export const Settings: FC = memo(() => {
 
   // 登録
   const registQiitaAPIKey: SubmitHandler<{ token: string }> = useCallback(async ({ token }) => {
+    setIsLoadingOverlay(true);
     await DB.registQiitaAPIKey(Util.encrypt(token));
     displayMessage({ title: "登録が正常に完了しました。", status: "success" });
+    setIsLoadingOverlay(false);
     reset({ token: "" });
   }, []);
 
@@ -49,7 +55,9 @@ export const Settings: FC = memo(() => {
                   px={2}
                 />
               </UI.InputGroup>
-              <PrimaryButton icon={MdOutlineAppRegistration}>登録</PrimaryButton>
+              <CustomButton icon={MdOutlineAppRegistration} color="blue">
+                登録
+              </CustomButton>
             </UI.Flex>
             {errors.token && (
               <UI.Box as="p" role="alert" ml={12} color="red">

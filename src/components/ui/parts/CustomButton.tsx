@@ -6,10 +6,10 @@ type Props = {
   children: ReactNode;
   icon: IconType;
   color: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
-export const SecondaryButton: FC<Props> = memo(({ children, icon: Icon, color, onClick }) => {
+export const CustomButton: FC<Props> = memo(({ children, icon: Icon, color, onClick }) => {
   return (
     <>
       <UI.Button type="submit" px={4} colorScheme={color} display="flex" variant="outline" onClick={onClick}>

@@ -1,11 +1,11 @@
 import { FC, memo, useCallback, useEffect, useState } from "react";
 import * as UI from "@chakra-ui/react";
 import { GiArchiveRegister } from "react-icons/gi";
-
 import { useNavigate } from "react-router-dom";
+
 import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { CONSTANT } from "../../constant";
-import { SecondaryButton } from "../../components/ui/parts/SecondaryButton";
+import { CustomButton } from "../../components/ui/parts/CustomButton";
 import { DB } from "../../supabase";
 import { ArticleType } from "../../domain/Article";
 import { useMessage } from "../../hooks/useMessage";
@@ -63,9 +63,9 @@ export const Articles: FC = memo(() => {
         ) : (
           <UI.Box w="100%" h="80%">
             <UI.Box display="flex" justifyContent="flex-end" mb={4}>
-              <SecondaryButton icon={GiArchiveRegister} color="blue" onClick={() => navigate("/article/0")}>
+              <CustomButton icon={GiArchiveRegister} color="blue" onClick={() => navigate("/article/0")}>
                 新規登録
-              </SecondaryButton>
+              </CustomButton>
             </UI.Box>
             <UI.FormControl display="flex" justifyContent="end" alignItems="center">
               <UI.Switch

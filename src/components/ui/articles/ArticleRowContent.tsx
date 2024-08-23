@@ -1,9 +1,10 @@
 import { FC, memo } from "react";
 import * as UI from "@chakra-ui/react";
-import { SecondaryButton } from "../parts/SecondaryButton";
 import { useNavigate } from "react-router-dom";
-import { ArticleType } from "../../../domain/Article";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
+
+import { CustomButton } from "../parts/CustomButton";
+import { ArticleType } from "../../../domain/Article";
 
 type Props = {
   article: ArticleType;
@@ -28,12 +29,12 @@ export const ArticleRowContent: FC<Props> = memo(({ article, onOpenDeleteModal }
         ))}
       </UI.UnorderedList>
       <UI.Box display="flex" gap={3} position="absolute" bottom={0} right={0}>
-        <SecondaryButton icon={FaEdit} color="green" onClick={() => navigate(`/article/${id}`)}>
+        <CustomButton icon={FaEdit} color="green" onClick={() => navigate(`/article/${id}`)}>
           編集
-        </SecondaryButton>
-        <SecondaryButton icon={FaRegTrashAlt} color="red" onClick={() => onOpenDeleteModal(id)}>
+        </CustomButton>
+        <CustomButton icon={FaRegTrashAlt} color="red" onClick={() => onOpenDeleteModal(id)}>
           削除
-        </SecondaryButton>
+        </CustomButton>
       </UI.Box>
     </UI.Box>
   );
