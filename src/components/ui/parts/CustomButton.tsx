@@ -7,12 +7,21 @@ type Props = {
   icon: IconType;
   color: string;
   onClick?: () => void;
+  isLoading?: boolean;
 };
 
-export const CustomButton: FC<Props> = memo(({ children, icon: Icon, color, onClick }) => {
+export const CustomButton: FC<Props> = memo(({ children, icon: Icon, color, onClick, isLoading }) => {
   return (
     <>
-      <UI.Button type="submit" px={4} colorScheme={color} display="flex" variant="outline" onClick={onClick}>
+      <UI.Button
+        type="submit"
+        px={4}
+        colorScheme={color}
+        display="flex"
+        variant="outline"
+        onClick={onClick}
+        isLoading={isLoading}
+      >
         <UI.Box pr={2}>
           <Icon size={20} />
         </UI.Box>

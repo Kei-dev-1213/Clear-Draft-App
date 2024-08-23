@@ -7,11 +7,9 @@ function App() {
   // context
   const { isLoadingOverlay } = useContext(LoadingContext);
 
-  console.log(isLoadingOverlay);
-
   return (
     <>
-      {isLoadingOverlay && <LoadingOverLay />}
+      <LoadingOverLay isLoadingOverlay={isLoadingOverlay} />
       <Router />
     </>
   );

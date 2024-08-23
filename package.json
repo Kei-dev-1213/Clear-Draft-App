@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@supabase/supabase-js": "^2.45.1",
     "@testing-library/jest-dom": "^6.4.8",

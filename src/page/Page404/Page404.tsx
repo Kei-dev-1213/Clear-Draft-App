@@ -6,7 +6,7 @@ import { CONSTANT } from "../../constant";
 export const Page404: FC = memo(() => {
   return (
     <>
-      <ContentWrapper w={CONSTANT.CONTENT_WIDTH}>
+      <ContentWrapper w={CONSTANT.CONTENT_WIDTH} align="center">
         <Text letterSpacing={1} fontSize={20}>
           SORRY,
           <br />
