@@ -57,7 +57,7 @@ export const Articles: FC = memo(() => {
     <>
       <ContentWrapper w={CONSTANT.CONTENT_WIDTH} pt="8">
         {loading ? (
-          <UI.Flex h={`calc(100vh - ${CONSTANT.HEADER_HEIGHT})`} alignItems="center">
+          <UI.Flex h={CONSTANT.CONTENT_HEIGHT} alignItems="center">
             <LoadingSpinner />
           </UI.Flex>
         ) : (
@@ -75,7 +75,7 @@ export const Articles: FC = memo(() => {
                 isChecked={draftOnly}
                 onChange={() => setDraftOnly(!draftOnly)}
               />
-              <UI.FormLabel htmlFor="draft-only" mb="0" fontSize={14}>
+              <UI.FormLabel htmlFor="draft-only" mb="0" fontSize={14} _hover={{ cursor: "pointer" }}>
                 未投稿の下書きのみ表示
               </UI.FormLabel>
             </UI.FormControl>

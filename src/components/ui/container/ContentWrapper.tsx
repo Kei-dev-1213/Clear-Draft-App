@@ -7,7 +7,7 @@ export const ContentWrapper: FC<{ children: ReactNode; w: string; align?: string
     return (
       <UI.Flex
         m="auto"
-        h={`calc(100vh - ${CONSTANT.HEADER_HEIGHT})`}
+        h={CONSTANT.CONTENT_HEIGHT}
         w={w}
         justifyContent="center"
         alignItems={align ?? ""}
