@@ -1,0 +1,9 @@
+.cm-header {
+    font-size: 1em !important;
+    font-weight: normal;
+}
+
+/* curtom-mde.css */
+.CodeMirror {
+    height: 70vh !important;
+}
