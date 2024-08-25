@@ -1,4 +1,4 @@
-import "./style.css";
+import "./style.scss";
 import { FC, memo } from "react";
 import * as UI from "@chakra-ui/react";
 import { Link } from "react-router-dom";

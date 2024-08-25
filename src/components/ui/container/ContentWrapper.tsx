@@ -5,16 +5,18 @@ import { CONSTANT } from "../../../constant";
 type Props = {
   children: ReactNode;
   h?: string;
+  minH?: string;
   w: string;
   align?: string;
   pt?: string;
 };
 
-export const ContentWrapper: FC<Props> = memo(({ children, h, w, align, pt }) => {
+export const ContentWrapper: FC<Props> = memo(({ children, h, minH, w, align, pt }) => {
   return (
     <UI.Flex
       m="auto"
       h={h ? h : CONSTANT.CONTENT_HEIGHT}
+      minH={minH}
       w={w}
       justifyContent="center"
       alignItems={align ?? ""}

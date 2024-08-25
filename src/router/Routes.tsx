@@ -1,3 +1,4 @@
+import { HeaderOnlyLayoutWrapper } from "../components/layout/HeaderOnlyLayoutWrapper";
 import { LayoutWrapper } from "../components/layout/LayoutWrapper";
 import { Article } from "../page/Article/Article";
 import { Articles } from "../page/Articles/Articles";
@@ -24,9 +25,9 @@ export const routes = [
   {
     path: "/article/:id",
     element: (
-      <LayoutWrapper>
+      <HeaderOnlyLayoutWrapper>
         <Article />
-      </LayoutWrapper>
+      </HeaderOnlyLayoutWrapper>
     ),
   },
   {

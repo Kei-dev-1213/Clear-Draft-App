@@ -15,6 +15,17 @@ const fetchAllArticles = async () => {
   }
 };
 
+// IDから記事内容の取得
+const fetchArticleFromId = async (id: string) => {
+  try {
+    const { data } = await supabase.from("articles").select("*").eq("id", id).single();
+    return (data as ArticleType) || null;
+  } catch (e) {
+    console.error(e);
+    throw new Error("記事の取得で不正なエラーが発生しました。");
+  }
+};
+
 // 記事削除
 const deleteArticle = async (id: string) => {
   try {
@@ -44,5 +55,6 @@ const registQiitaAPIKey = async (token: string) => {
 export const DB = {
   registQiitaAPIKey,
   fetchAllArticles,
+  fetchArticleFromId,
   deleteArticle,
 };

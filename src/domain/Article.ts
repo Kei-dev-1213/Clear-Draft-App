@@ -5,6 +5,7 @@ export class ArticleType {
     public tag: string,
     public main_text: string,
     public posted: boolean,
+    public ai_answer: string,
     public updated_at: string,
     public created_at: string
   ) {}

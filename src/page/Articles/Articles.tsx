@@ -57,9 +57,7 @@ export const Articles: FC = memo(() => {
     <>
       <ContentWrapper w={CONSTANT.CONTENT_WIDTH} pt="8">
         {loading ? (
-          <UI.Flex h={CONSTANT.CONTENT_HEIGHT} alignItems="center">
-            <LoadingSpinner />
-          </UI.Flex>
+          <LoadingSpinner />
         ) : (
           <UI.Box w="100%" h="80%">
             <UI.Box display="flex" justifyContent="flex-end" mb={4}>
