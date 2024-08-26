@@ -40,4 +40,20 @@
         font-size: 0.67em !important;
         font-weight: bold !important;
     }
+
+    & blockquote {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        color: rgba(0, 0, 0, 0.6);
+        &::before {
+            content: "";
+            display: inline-block;
+            height: 3em;
+            width: 4px;
+            background-color: rgb(237, 238, 238);
+            margin-right: 16px;
+            border-radius: 5px;
+        }
+    }
 }

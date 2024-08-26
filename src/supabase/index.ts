@@ -36,6 +36,16 @@ const deleteArticle = async (id: string) => {
   }
 };
 
+// 記事の更新
+const updateArticle = async ({ id, title, tag, main_text, ai_answer }: ArticleType) => {
+  try {
+    await supabase.from("articles").update({ title, tag, main_text, ai_answer }).eq("id", id);
+  } catch (e) {
+    console.error(e);
+    throw new Error("記事の削除で不正なエラーが発生しました。");
+  }
+};
+
 // Qiita APIキーの更新
 const registQiitaAPIKey = async (token: string) => {
   try {
@@ -57,4 +67,5 @@ export const DB = {
   fetchAllArticles,
   fetchArticleFromId,
   deleteArticle,
+  updateArticle,
 };

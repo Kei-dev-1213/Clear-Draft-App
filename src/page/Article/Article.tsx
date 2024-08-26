@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
@@ -19,6 +19,7 @@ import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { ArticleMDE } from "../../components/ui/article/ArticleMDE";
 import { AiAnswerAccordion } from "../../components/ui/article/AiAnswerAccordion";
+import { ArticleType } from "../../domain/Article";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
@@ -49,6 +50,7 @@ export const Article: FC = memo(() => {
   // 初期処理
   useEffect(() => {
     (async () => {
+      // URLパラメータから記事の取得
       if (id !== "0") {
         const article = await DB.fetchArticleFromId(id!);
         if (article) {
@@ -81,6 +83,32 @@ export const Article: FC = memo(() => {
   //   }
   // };
 
+  // 保存
+  const onClickUpdate = useCallback(() => {
+    setLoading(true);
+    const newArticle = {
+      id,
+      title: articleTitle,
+      tag: articleTag,
+      main_text: articleMarkdownText,
+      ai_answer: aiAnswerText,
+    };
+    DB.updateArticle(newArticle as ArticleType);
+    setLoading(false);
+    displayMessage({ title: "保存しました。", status: "success" });
+  }, [id, articleTitle, articleTag, articleMarkdownText, aiAnswerText]);
+
+  // ページ離脱時の警告
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <>
       <ContentWrapper w="80%" pt="3">
@@ -93,7 +121,7 @@ export const Article: FC = memo(() => {
                 <CustomButton icon={FaRobot} color="blue">
                   生成AIに聞く
                 </CustomButton>
-                <CustomButton icon={GiArchiveRegister} color="red">
+                <CustomButton icon={GiArchiveRegister} color="red" onClick={onClickUpdate}>
                   保存する
                 </CustomButton>
                 <CustomButton icon={MdOutlinePostAdd} color="green">
@@ -112,9 +140,9 @@ export const Article: FC = memo(() => {
               <UI.Input
                 bg="white"
                 padding={4}
-                placeholder="タグを入力してください。半角スペース区切りで5つまで入力できます。"
+                placeholder="タグを入力してください。スペース区切りで5つまで入力できます。"
                 value={articleTag}
-                onChange={(e) => setArticleTag(e.target.value)}
+                onChange={(e) => setArticleTag(e.target.value.replace("　", " "))}
               />
             </UI.Stack>
             <UI.Flex w="100%" gap={4}>
