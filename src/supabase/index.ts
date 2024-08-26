@@ -37,12 +37,23 @@ const deleteArticle = async (id: string) => {
 };
 
 // 記事の更新
-const updateArticle = async ({ id, title, tag, main_text, ai_answer }: ArticleType) => {
+const updateArticle = async ({ id, title, tag, main_text, ai_answer, posted }: ArticleType) => {
   try {
-    await supabase.from("articles").update({ title, tag, main_text, ai_answer }).eq("id", id);
+    await supabase.from("articles").update({ title, tag, main_text, ai_answer, posted }).eq("id", id);
   } catch (e) {
     console.error(e);
-    throw new Error("記事の削除で不正なエラーが発生しました。");
+    throw new Error("記事の更新で不正なエラーが発生しました。");
+  }
+};
+
+// Qiita APIキーの取得
+const fetchQiitaAPIKey = async () => {
+  try {
+    const { data } = await supabase.from("api_tokens").select().single();
+    return data;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Qiita APIキーの更新で不正なエラーが発生しました。");
   }
 };
 
@@ -67,5 +78,6 @@ export const DB = {
   fetchAllArticles,
   fetchArticleFromId,
   deleteArticle,
+  fetchQiitaAPIKey,
   updateArticle,
 };

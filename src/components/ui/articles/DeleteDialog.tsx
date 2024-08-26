@@ -25,7 +25,7 @@ export const DeleteDialog: FC<Props> = memo(({ isOpen, onClose, deleteArticle })
             <UI.Button colorScheme="red" onClick={deleteArticle} mr={3}>
               削除
             </UI.Button>
-            <UI.Button onClick={onClose}>Cancel</UI.Button>
+            <UI.Button onClick={onClose}>キャンセル</UI.Button>
           </UI.AlertDialogFooter>
         </UI.AlertDialogContent>
       </UI.AlertDialogOverlay>

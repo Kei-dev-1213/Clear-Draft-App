@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import SimpleMde from "react-simplemde-editor";
 import { FC, memo } from "react";
+import usePassiveEventListener from "../../../hooks/usePassiveEventListener";
 
 type Props = {
   articleMarkdownText: string;
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export const ArticleMDE: FC<Props> = memo(({ articleMarkdownText, setArticleMarkdownText, prevHtmlContent }) => {
+  // パッシブイベントリスナーを設定
+  usePassiveEventListener("touchstart", () => {});
   return (
     <>
       <SArticleEditDiv>

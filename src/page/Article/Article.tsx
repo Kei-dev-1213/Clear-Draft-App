@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect, useRef, useState } from "react";
+import { FC, memo, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
@@ -20,6 +20,9 @@ import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { ArticleMDE } from "../../components/ui/article/ArticleMDE";
 import { AiAnswerAccordion } from "../../components/ui/article/AiAnswerAccordion";
 import { ArticleType } from "../../domain/Article";
+import { PostModal } from "../../components/ui/article/PostModal";
+import { useAPI } from "../../hooks/useAPI";
+import { Util } from "../../util";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
@@ -37,34 +40,28 @@ export const Article: FC = memo(() => {
   const bottomRef = useRef<HTMLDivElement>(null);
   // state
   const [prevHtmlContent, setPrevHtmlContent] = useState("");
+  const [loading, setLoading] = useState(true);
   const [articleTitle, setArticleTitle] = useState("");
   const [articleTag, setArticleTag] = useState("");
   const [articleMarkdownText, setArticleMarkdownText] = useState("");
   const [aiAnswerText, setAiAnswerText] = useState("");
-  const [loading, setLoading] = useState(true);
+  const formData = {
+    id,
+    title: articleTitle,
+    tag: articleTag,
+    main_text: articleMarkdownText,
+    ai_answer: aiAnswerText,
+  } as ArticleType;
 
   // hooks
   const { displayMessage } = useMessage();
   const navigate = useNavigate();
+  const postModal = UI.useDisclosure();
+  const { postToQiita } = useAPI();
 
   // 初期処理
   useEffect(() => {
-    (async () => {
-      // URLパラメータから記事の取得
-      if (id !== "0") {
-        const article = await DB.fetchArticleFromId(id!);
-        if (article) {
-          setArticleTitle(article.title);
-          setArticleTag(article.tag);
-          setArticleMarkdownText(article.main_text);
-          setAiAnswerText(article.ai_answer);
-        } else {
-          displayMessage({ title: "URLのIdが不正です。一覧画面を開きます。", status: "error" });
-          navigate("/articles");
-        }
-      }
-      setLoading(false);
-    })();
+    refreshArticle();
   }, []);
 
   // articleMarkdownTextの変更
@@ -83,20 +80,68 @@ export const Article: FC = memo(() => {
   //   }
   // };
 
+  // 初期表示
+  const refreshArticle = async () => {
+    // URLパラメータから記事の取得
+    if (id !== "0") {
+      const article = await DB.fetchArticleFromId(id!);
+      if (article) {
+        setArticleTitle(article.title);
+        setArticleTag(article.tag);
+        setArticleMarkdownText(article.main_text);
+        setAiAnswerText(article.ai_answer);
+      } else {
+        displayMessage({ title: "URLのIdが不正です。一覧画面を開きます。", status: "error" });
+        navigate("/articles");
+      }
+    }
+    setLoading(false);
+  };
+
   // 保存
-  const onClickUpdate = useCallback(() => {
+  const onClickUpdate = async () => {
     setLoading(true);
-    const newArticle = {
-      id,
-      title: articleTitle,
-      tag: articleTag,
-      main_text: articleMarkdownText,
-      ai_answer: aiAnswerText,
-    };
-    DB.updateArticle(newArticle as ArticleType);
+    await updateArticle(false);
     setLoading(false);
     displayMessage({ title: "保存しました。", status: "success" });
-  }, [id, articleTitle, articleTag, articleMarkdownText, aiAnswerText]);
+  };
+
+  // 記事の保存処理
+  const updateArticle = async (posted: boolean) => {
+    const { id, title, tag, main_text, ai_answer } = formData;
+    const newArticle = {
+      id,
+      title,
+      tag,
+      main_text,
+      ai_answer,
+      posted,
+    };
+    await DB.updateArticle(newArticle as ArticleType);
+  };
+
+  // 投稿
+  const onClickPost = async (scope: string) => {
+    postModal.onClose();
+    setLoading(true);
+    try {
+      // apiキーの取得
+      const { token } = await DB.fetchQiitaAPIKey();
+      const apiKey = Util.decrypt(token);
+      // 投稿
+      await postToQiita(apiKey, formData, scope === "private" ? true : false);
+    } catch (e) {
+      console.error("Qiitaへの投稿が出来ませんでした。", e);
+      displayMessage({ title: "Qiitaへの投稿が出来ませんでした。", status: "error" });
+      setLoading(false);
+      return;
+    }
+    // 保存と画面の更新
+    await updateArticle(true);
+    await refreshArticle();
+    displayMessage({ title: "記事の投稿が完了しました。", status: "success" });
+    setLoading(false);
+  };
 
   // ページ離脱時の警告
   useEffect(() => {
@@ -124,7 +169,7 @@ export const Article: FC = memo(() => {
                 <CustomButton icon={GiArchiveRegister} color="red" onClick={onClickUpdate}>
                   保存する
                 </CustomButton>
-                <CustomButton icon={MdOutlinePostAdd} color="green">
+                <CustomButton icon={MdOutlinePostAdd} color="green" onClick={postModal.onOpen}>
                   投稿する
                 </CustomButton>
               </UI.HStack>
@@ -134,30 +179,32 @@ export const Article: FC = memo(() => {
                 bg="white"
                 padding={4}
                 placeholder="記事タイトル"
-                value={articleTitle}
+                value={formData.title}
                 onChange={(e) => setArticleTitle(e.target.value)}
               />
               <UI.Input
                 bg="white"
                 padding={4}
                 placeholder="タグを入力してください。スペース区切りで5つまで入力できます。"
-                value={articleTag}
+                value={formData.tag}
                 onChange={(e) => setArticleTag(e.target.value.replace("　", " "))}
               />
             </UI.Stack>
             <UI.Flex w="100%" gap={4}>
               <ArticleMDE
-                articleMarkdownText={articleMarkdownText}
+                articleMarkdownText={formData.main_text}
                 prevHtmlContent={prevHtmlContent}
                 setArticleMarkdownText={setArticleMarkdownText}
               />
             </UI.Flex>
-            <AiAnswerAccordion accordionRef={accordionRef} aiAnswerText={aiAnswerText} />
+            <AiAnswerAccordion accordionRef={accordionRef} aiAnswerText={formData.ai_answer} />
             <Footer />
             <div ref={bottomRef} />
           </UI.Flex>
         )}
       </ContentWrapper>
+
+      <PostModal isOpen={postModal.isOpen} onClose={postModal.onClose} onClickPost={onClickPost} />
     </>
   );
 });
