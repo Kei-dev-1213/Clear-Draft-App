@@ -5,13 +5,14 @@ import { FaRobot } from "react-icons/fa";
 type Props = {
   accordionRef: React.RefObject<HTMLDivElement>;
   aiAnswerText: string;
+  accordionButtonRef: React.RefObject<HTMLButtonElement>;
 };
 
-export const AiAnswerAccordion: FC<Props> = memo(({ accordionRef, aiAnswerText }) => {
+export const AiAnswerAccordion: FC<Props> = memo(({ accordionRef, aiAnswerText, accordionButtonRef }) => {
   return (
     <UI.Accordion allowToggle mb={4} ref={accordionRef}>
       <UI.AccordionItem>
-        <UI.AccordionButton _expanded={{ bg: "tomato", color: "white" }}>
+        <UI.AccordionButton ref={accordionButtonRef} _expanded={{ bg: "tomato", color: "white" }}>
           <UI.Box as="span" flex="1" textAlign="left">
             <UI.Flex alignItems="center" gap={2} h="100%">
               <FaRobot size={20} />

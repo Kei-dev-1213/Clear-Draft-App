@@ -22,14 +22,14 @@ import { PostModal } from "../../components/ui/article/PostModal";
 import { useAPI } from "../../hooks/useAPI";
 import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
+import { AIModal } from "../../components/ui/article/AIModal";
+import { InquiryOption } from "../../domain/enum";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
 renderer.code = ({ text }: { text: string }) => {
-  console.log(text);
   return highlightjs.highlightAuto(text).value;
 };
-
 marked.setOptions({
   renderer,
 });
@@ -38,6 +38,7 @@ export const Article: FC = memo(() => {
   const { id } = useParams();
   const accordionRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const accordionButtonRef = useRef<HTMLButtonElement>(null);
   // state
   const [isUpdateArticle, setIsUpdateArticle] = useState(false);
   const [prevHtmlContent, setPrevHtmlContent] = useState("");
@@ -55,6 +56,7 @@ export const Article: FC = memo(() => {
   const { displayMessage } = useMessage();
   const navigate = useNavigate();
   const postModal = UI.useDisclosure();
+  const aiModal = UI.useDisclosure();
   const { postToQiita } = useAPI();
   const { fetchArticleFromId, registArticle } = useArticle();
 
@@ -63,7 +65,7 @@ export const Article: FC = memo(() => {
     refreshArticle();
   }, [id]);
 
-  // articleMarkdownTextの変更
+  // プレビュー文言のサニタイズ
   useEffect(() => {
     const parseMarkdown = async () => {
       const parsedHtml = await marked(formData.main_text);
@@ -73,11 +75,12 @@ export const Article: FC = memo(() => {
   }, [formData.main_text]);
 
   // functions
-  // const scrollToBottom = () => {
-  //   if (bottomRef.current) {
-  //     bottomRef.current.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // };
+  // 画面一番下までスクロール
+  const scrollToBottom = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // 初期表示
   const refreshArticle = async () => {
@@ -116,28 +119,51 @@ export const Article: FC = memo(() => {
   const onClickPost = async (scope: string) => {
     // チェック
     if (!formData.title || !formData.tag || !formData.main_text) {
-      displayMessage({ title: "入力項目は全て必須項目です。", status: "error" });
+      displayMessage({ title: "入力項目は全て必須です。", status: "error" });
       return;
     }
-
+    // 正常
     postModal.onClose();
     setLoading(true);
     try {
       // 投稿
       await postToQiita(formData, scope === "private" ? true : false);
     } catch (e) {
+      // 失敗
       console.error("Qiitaへの投稿が出来ませんでした。", e);
       displayMessage({ title: "Qiitaへの投稿が出来ませんでした。", status: "error" });
       setLoading(false);
       return;
     }
-    // 投稿完了時に保存して画面を更新
+    // 投稿完了時に保存と画面更新
     const newId = await registArticle(isUpdateArticle, formData);
     await refreshArticle();
     displayMessage({ title: "記事の投稿が完了しました。", status: "success" });
     // 新規登録のみ開き直す
     newId && navigate(`/article/${newId}`);
   };
+
+  //  リクエストボタン押下
+  const onClickRequest = async (inquiryText: string, inquiryOption: InquiryOption) => {
+    // チェック
+    if (Number(inquiryOption) === InquiryOption.Other && !inquiryText) {
+      displayMessage({ title: "問い合わせ内容を入力してください。", status: "error" });
+      return;
+    }
+    if (!formData.title || !formData.main_text) {
+      displayMessage({ title: "記事タイトルと本文は必須項目です。", status: "error" });
+      return;
+    }
+    // 正常
+    aiModal.onClose();
+
+    //
+    openAiAnswerAccordion();
+    scrollToBottom();
+  };
+
+  // 生成AIの回答ボタン押下
+  const openAiAnswerAccordion = () => accordionButtonRef.current!.click();
 
   // ページ離脱時の警告
   useEffect(() => {
@@ -159,7 +185,7 @@ export const Article: FC = memo(() => {
           <UI.Flex w="100%" flexDirection="column">
             <UI.Flex justifyContent="flex-end" mb={3}>
               <UI.HStack>
-                <CustomButton icon={FaRobot} color="blue">
+                <CustomButton icon={FaRobot} color="blue" onClick={aiModal.onOpen}>
                   生成AIに聞く
                 </CustomButton>
                 <CustomButton icon={GiArchiveRegister} color="red" onClick={onClickUpdate}>
@@ -195,7 +221,11 @@ export const Article: FC = memo(() => {
                 handleChange={handleChange}
               />
             </UI.Flex>
-            <AiAnswerAccordion accordionRef={accordionRef} aiAnswerText={formData.ai_answer} />
+            <AiAnswerAccordion
+              accordionRef={accordionRef}
+              aiAnswerText={formData.ai_answer}
+              accordionButtonRef={accordionButtonRef}
+            />
             <Footer />
             <div ref={bottomRef} />
           </UI.Flex>
@@ -203,6 +233,8 @@ export const Article: FC = memo(() => {
       </ContentWrapper>
 
       <PostModal isOpen={postModal.isOpen} onClose={postModal.onClose} onClickPost={onClickPost} />
+
+      <AIModal isOpen={aiModal.isOpen} onClose={aiModal.onClose} onClickRequest={onClickRequest} />
     </>
   );
 });

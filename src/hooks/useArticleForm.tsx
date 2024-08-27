@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArticleFormType } from "../domain/Article";
+import { ArticleFormType } from "../domain/article";
 
 export const useArticleForm = (initialState: ArticleFormType) => {
   const [formData, setFormData] = useState(initialState);

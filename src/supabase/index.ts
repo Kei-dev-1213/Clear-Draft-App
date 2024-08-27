@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { ArticleFormType, ArticleType } from "../domain/Article";
+import { ArticleFormType, ArticleType } from "../domain/article";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.VITE_SUPABASE_ANON_KEY!);
 
