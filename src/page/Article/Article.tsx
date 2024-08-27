@@ -23,7 +23,7 @@ import { useAPI } from "../../hooks/useAPI";
 import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
-import { InquiryOption } from "../../domain/Enum";
+import { InquiryOption } from "../../domain/enum";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
