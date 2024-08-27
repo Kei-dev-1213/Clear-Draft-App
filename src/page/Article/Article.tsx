@@ -24,6 +24,7 @@ import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
 import { InquiryOption } from "../../domain/enum";
+import { Util } from "../../util";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
@@ -110,12 +111,21 @@ export const Article: FC = memo(() => {
   // 保存ボタン押下
   const onClickUpdate = async () => {
     // チェック
-    if (formData.tag.split(" ").length > 5) {
+    if (Util.validateTagsNum(formData.tag)) {
       displayMessage({ title: "タグは5個以内で入力してください", status: "error" });
       return;
     }
 
-    const newId = await registArticle(isUpdateArticle, formData);
+    let newId;
+    try {
+      // 投稿
+      newId = await registArticle(isUpdateArticle, formData);
+    } catch (e) {
+      // 失敗
+      console.error("記事の保存が出来ませんでした。", e);
+      displayMessage({ title: "記事の保存が出来ませんでした。", status: "error" });
+      return;
+    }
     displayMessage({ title: "保存しました。", status: "success" });
     // 新規登録時のみ開き直す
     newId && navigate(`/article/${newId}`);
@@ -124,11 +134,11 @@ export const Article: FC = memo(() => {
   // 投稿ボタン押下
   const onClickPost = async (scope: string) => {
     // チェック
-    if (!formData.title || !formData.tag || !formData.main_text) {
+    if (Util.validateRequireInputs(formData)) {
       displayMessage({ title: "入力項目は全て必須です。", status: "error" });
       return;
     }
-    if (formData.tag.split(" ").length > 5) {
+    if (Util.validateTagsNum(formData.tag)) {
       displayMessage({ title: "タグは5個以内で入力してください", status: "error" });
       return;
     }

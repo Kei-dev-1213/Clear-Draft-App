@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { ArticleFormType } from "../domain/Article";
 
 const ENCRYPTION_KEY = process.env.VITE_ENCRYPTION_KEY!;
 const IV_LENGTH = 16;
@@ -37,8 +38,24 @@ const formatDate = (dateString: string): string => {
   return `${year}/${month}/${day} ${hours}:${minutes}`;
 };
 
+// 必須チェック
+const validateRequireInputs = (formData: ArticleFormType) => {
+  if (!formData.title.trim() || !formData.tag.trim() || !formData.main_text.trim()) {
+    return true;
+  }
+};
+
+// タグの数チェック
+const validateTagsNum = (tag: string) => {
+  if (tag.split(" ").length > 5) {
+    return true;
+  }
+};
+
 export const Util = {
   encrypt,
   decrypt,
   formatDate,
+  validateRequireInputs,
+  validateTagsNum,
 };

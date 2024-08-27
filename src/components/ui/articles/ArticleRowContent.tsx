@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import React, { FC, memo } from "react";
 import * as UI from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
@@ -24,17 +24,13 @@ export const ArticleRowContent: FC<Props> = memo(({ article, onOpenDeleteModal }
       <UI.UnorderedList display="flex" styleType="none" m={0} mt={4} gap={3}>
         {tag ? (
           tag.split(" ").map((tag: string, index: number) => (
-            <UI.ListItem
-              key={`${tag}-${index}`}
-              fontSize={15}
-              bg="gray.700"
-              color="#fff"
-              px={3}
-              py={1}
-              borderRadius={6}
-            >
-              {tag}
-            </UI.ListItem>
+            <React.Fragment key={`${tag}-${index}`}>
+              {tag && (
+                <UI.ListItem fontSize={15} bg="gray.700" color="#fff" px={3} py={1} borderRadius={6}>
+                  {tag}
+                </UI.ListItem>
+              )}
+            </React.Fragment>
           ))
         ) : (
           <UI.Text color="gray.600">(タグ未設定)</UI.Text>
