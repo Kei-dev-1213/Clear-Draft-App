@@ -84,7 +84,7 @@ const registQiitaAPIKey = async (token: string) => {
     if (!data) {
       await supabase.from("api_tokens").insert({ token });
     } else {
-      await supabase.from("api_tokens").update({ token }).eq("id", data.id);
+      await supabase.from("api_tokens").update({ token }).eq("token", data.token);
     }
   } catch (e) {
     console.error(e);
