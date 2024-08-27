@@ -1,13 +1,16 @@
 import axios from "axios";
-import { ArticleType } from "../domain/Article";
+import { ArticleFormType } from "../domain/Article";
+import { DB } from "../supabase";
+import { Util } from "../util";
 
 export const useAPI = () => {
   // Qiitaへの投稿
-  const postToQiita = async (
-    apiKey: string,
-    formData: Omit<ArticleType, "posted" | "updated_at" | "created_at">,
-    toPrivate: boolean
-  ) => {
+  const postToQiita = async (formData: ArticleFormType, toPrivate: boolean) => {
+    // apiキーの取得
+    const { token } = await DB.fetchQiitaAPIKey();
+    const apiKey = Util.decrypt(token);
+
+    // 投稿用オブジェクト
     const postData = {
       body: formData.main_text,
       private: toPrivate,

@@ -14,19 +14,19 @@ import "./custom-mde.scss";
 import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { Footer } from "../../components/ui/footer/Footer";
 import { CustomButton } from "../../components/ui/parts/CustomButton";
-import { DB } from "../../supabase";
 import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { ArticleMDE } from "../../components/ui/article/ArticleMDE";
 import { AiAnswerAccordion } from "../../components/ui/article/AiAnswerAccordion";
-import { ArticleType } from "../../domain/Article";
 import { PostModal } from "../../components/ui/article/PostModal";
 import { useAPI } from "../../hooks/useAPI";
-import { Util } from "../../util";
+import { useArticle } from "../../hooks/useArticle";
+import { useArticleForm } from "../../hooks/useArticleForm";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
 renderer.code = ({ text }: { text: string }) => {
+  console.log(text);
   return highlightjs.highlightAuto(text).value;
 };
 
@@ -39,39 +39,38 @@ export const Article: FC = memo(() => {
   const accordionRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   // state
+  const [isUpdateArticle, setIsUpdateArticle] = useState(false);
   const [prevHtmlContent, setPrevHtmlContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [articleTitle, setArticleTitle] = useState("");
-  const [articleTag, setArticleTag] = useState("");
-  const [articleMarkdownText, setArticleMarkdownText] = useState("");
-  const [aiAnswerText, setAiAnswerText] = useState("");
-  const formData = {
-    id,
-    title: articleTitle,
-    tag: articleTag,
-    main_text: articleMarkdownText,
-    ai_answer: aiAnswerText,
-  } as ArticleType;
+  const { formData, setFormData, handleChange } = useArticleForm({
+    id: "",
+    title: "",
+    tag: "",
+    main_text: "",
+    ai_answer: "",
+    posted: false,
+  });
 
   // hooks
   const { displayMessage } = useMessage();
   const navigate = useNavigate();
   const postModal = UI.useDisclosure();
   const { postToQiita } = useAPI();
+  const { fetchArticleFromId, registArticle } = useArticle();
 
   // 初期処理
   useEffect(() => {
     refreshArticle();
-  }, []);
+  }, [id]);
 
   // articleMarkdownTextの変更
   useEffect(() => {
     const parseMarkdown = async () => {
-      const parsedHtml = await marked(articleMarkdownText);
+      const parsedHtml = await marked(formData.main_text);
       setPrevHtmlContent(DOMPurify.sanitize(parsedHtml));
     };
     parseMarkdown();
-  }, [articleMarkdownText]);
+  }, [formData.main_text]);
 
   // functions
   // const scrollToBottom = () => {
@@ -84,13 +83,20 @@ export const Article: FC = memo(() => {
   const refreshArticle = async () => {
     // URLパラメータから記事の取得
     if (id !== "0") {
-      const article = await DB.fetchArticleFromId(id!);
+      const article = await fetchArticleFromId(id!);
       if (article) {
-        setArticleTitle(article.title);
-        setArticleTag(article.tag);
-        setArticleMarkdownText(article.main_text);
-        setAiAnswerText(article.ai_answer);
+        const { title, tag, main_text, ai_answer, posted } = article;
+        setFormData({
+          id: id!,
+          title,
+          tag,
+          main_text,
+          ai_answer,
+          posted,
+        });
+        setIsUpdateArticle(true);
       } else {
+        // URLのIdから記事を取得不可
         displayMessage({ title: "URLのIdが不正です。一覧画面を開きます。", status: "error" });
         navigate("/articles");
       }
@@ -98,49 +104,39 @@ export const Article: FC = memo(() => {
     setLoading(false);
   };
 
-  // 保存
+  // 保存ボタン押下
   const onClickUpdate = async () => {
-    setLoading(true);
-    await updateArticle(false);
-    setLoading(false);
+    const newId = await registArticle(isUpdateArticle, formData);
     displayMessage({ title: "保存しました。", status: "success" });
+    // 新規登録のみ開き直す
+    newId && navigate(`/article/${newId}`);
   };
 
-  // 記事の保存処理
-  const updateArticle = async (posted: boolean) => {
-    const { id, title, tag, main_text, ai_answer } = formData;
-    const newArticle = {
-      id,
-      title,
-      tag,
-      main_text,
-      ai_answer,
-      posted,
-    };
-    await DB.updateArticle(newArticle as ArticleType);
-  };
-
-  // 投稿
+  // 投稿ボタン押下
   const onClickPost = async (scope: string) => {
+    // チェック
+    if (!formData.title || !formData.tag || !formData.main_text) {
+      displayMessage({ title: "入力項目は全て必須項目です。", status: "error" });
+      return;
+    }
+
     postModal.onClose();
     setLoading(true);
     try {
-      // apiキーの取得
-      const { token } = await DB.fetchQiitaAPIKey();
-      const apiKey = Util.decrypt(token);
       // 投稿
-      await postToQiita(apiKey, formData, scope === "private" ? true : false);
+      await postToQiita(formData, scope === "private" ? true : false);
     } catch (e) {
       console.error("Qiitaへの投稿が出来ませんでした。", e);
       displayMessage({ title: "Qiitaへの投稿が出来ませんでした。", status: "error" });
       setLoading(false);
       return;
     }
-    // 保存と画面の更新
-    await updateArticle(true);
+    // 投稿完了時に保存して画面を更新
+    const newId = await registArticle(isUpdateArticle, formData);
     await refreshArticle();
     displayMessage({ title: "記事の投稿が完了しました。", status: "success" });
-    setLoading(false);
+    // 新規登録のみ開き直す
+    newId && navigate(`/article/${newId}`);
   };
 
   // ページ離脱時の警告
@@ -176,25 +172,27 @@ export const Article: FC = memo(() => {
             </UI.Flex>
             <UI.Stack mb={2}>
               <UI.Input
+                name="title"
                 bg="white"
                 padding={4}
                 placeholder="記事タイトル"
                 value={formData.title}
-                onChange={(e) => setArticleTitle(e.target.value)}
+                onChange={(e) => handleChange(e.target.name, e.target.value)}
               />
               <UI.Input
+                name="tag"
                 bg="white"
                 padding={4}
                 placeholder="タグを入力してください。スペース区切りで5つまで入力できます。"
                 value={formData.tag}
-                onChange={(e) => setArticleTag(e.target.value.replace("　", " "))}
+                onChange={(e) => handleChange(e.target.name, e.target.value.replace("　", " "))}
               />
             </UI.Stack>
             <UI.Flex w="100%" gap={4}>
               <ArticleMDE
                 articleMarkdownText={formData.main_text}
                 prevHtmlContent={prevHtmlContent}
-                setArticleMarkdownText={setArticleMarkdownText}
+                handleChange={handleChange}
               />
             </UI.Flex>
             <AiAnswerAccordion accordionRef={accordionRef} aiAnswerText={formData.ai_answer} />

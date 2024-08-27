@@ -20,7 +20,7 @@ export const AiAnswerAccordion: FC<Props> = memo(({ accordionRef, aiAnswerText }
           </UI.Box>
           <UI.AccordionIcon />
         </UI.AccordionButton>
-        <UI.AccordionPanel pb={4} h="92vh" bg="white">
+        <UI.AccordionPanel pb={4} h="80vh" bg="white">
           {aiAnswerText}
         </UI.AccordionPanel>
       </UI.AccordionItem>

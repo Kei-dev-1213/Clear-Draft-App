@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { CONSTANT } from "../../constant";
 import { CustomButton } from "../../components/ui/parts/CustomButton";
-import { DB } from "../../supabase";
 import { ArticleType } from "../../domain/Article";
 import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { DeleteDialog } from "../../components/ui/articles/DeleteDialog";
 import { ArticleTable } from "../../components/ui/articles/ArticleTable";
+import { useArticle } from "../../hooks/useArticle";
 
 export const Articles: FC = memo(() => {
   // state
@@ -24,6 +24,7 @@ export const Articles: FC = memo(() => {
   const { displayMessage } = useMessage();
   const deleteModal = UI.useDisclosure();
   const navigate = useNavigate();
+  const articleHook = useArticle();
 
   // 初期処理
   useEffect(() => {
@@ -36,7 +37,7 @@ export const Articles: FC = memo(() => {
   // functions
   // fetch
   const fetchAllArticles = async () => {
-    setArticles(await DB.fetchAllArticles());
+    setArticles(await articleHook.fetchAllArticles());
   };
 
   // delete
@@ -47,7 +48,7 @@ export const Articles: FC = memo(() => {
   const deleteArticle = useCallback(async () => {
     deleteModal.onClose();
     setLoading(true);
-    await DB.deleteArticle(selectedArticleId);
+    await articleHook.deleteArticle(selectedArticleId);
     await fetchAllArticles();
     setLoading(false);
     displayMessage({ title: "記事の削除が完了しました", status: "error" });

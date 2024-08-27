@@ -9,7 +9,7 @@ type Props = {
 
 export const PostModal: FC<Props> = memo(({ isOpen, onClose, onClickPost }) => {
   // state
-  const [scope, setScope] = useState("");
+  const [scope, setScope] = useState("public");
 
   // 初期処理
   useEffect(() => {
@@ -35,7 +35,7 @@ export const PostModal: FC<Props> = memo(({ isOpen, onClose, onClickPost }) => {
         </UI.ModalBody>
 
         <UI.ModalFooter>
-          <UI.Button colorScheme="teal" mr={3} onClick={onClickPost.bind(null, scope)}>
+          <UI.Button colorScheme="teal" mr={3} onClick={() => onClickPost(scope)}>
             投稿する
           </UI.Button>
           <UI.Button onClick={onClose}>キャンセル</UI.Button>

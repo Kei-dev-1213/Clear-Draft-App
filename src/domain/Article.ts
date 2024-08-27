@@ -10,3 +10,5 @@ export class ArticleType {
     public created_at: string
   ) {}
 }
+
+export type ArticleFormType = Omit<ArticleType, "updated_at" | "created_at">;

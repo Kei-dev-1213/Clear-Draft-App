@@ -5,17 +5,17 @@ import usePassiveEventListener from "../../../hooks/usePassiveEventListener";
 
 type Props = {
   articleMarkdownText: string;
-  setArticleMarkdownText: React.Dispatch<React.SetStateAction<string>>;
   prevHtmlContent: string;
+  handleChange: (name: string, value: string) => void;
 };
 
-export const ArticleMDE: FC<Props> = memo(({ articleMarkdownText, setArticleMarkdownText, prevHtmlContent }) => {
+export const ArticleMDE: FC<Props> = memo(({ articleMarkdownText, prevHtmlContent, handleChange }) => {
   // パッシブイベントリスナーを設定
   usePassiveEventListener("touchstart", () => {});
   return (
     <>
       <SArticleEditDiv>
-        <SimpleMde value={articleMarkdownText} onChange={(value: string) => setArticleMarkdownText(value)} />
+        <SimpleMde value={articleMarkdownText} onChange={(value: string) => handleChange("main_text", value)} />
       </SArticleEditDiv>
       <SArticlePrevDiv className="preview">
         <div dangerouslySetInnerHTML={{ __html: prevHtmlContent }}></div>

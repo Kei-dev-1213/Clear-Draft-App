@@ -12,7 +12,7 @@ export const DeleteDialog: FC<Props> = memo(({ isOpen, onClose, deleteArticle })
   const cancelRef = useRef<FocusableElement | null>(null);
 
   return (
-    <UI.AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+    <UI.AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} motionPreset="slideInBottom">
       <UI.AlertDialogOverlay>
         <UI.AlertDialogContent>
           <UI.AlertDialogHeader fontSize="lg" fontWeight="bold">

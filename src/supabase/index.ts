@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { ArticleType } from "../domain/Article";
+import { ArticleFormType, ArticleType } from "../domain/Article";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.VITE_SUPABASE_ANON_KEY!);
 
@@ -36,10 +36,29 @@ const deleteArticle = async (id: string) => {
   }
 };
 
-// 記事の更新
-const updateArticle = async ({ id, title, tag, main_text, ai_answer, posted }: ArticleType) => {
+// 記事の登録
+const insertArticle = async (formData: ArticleFormType) => {
+  const { title, tag, main_text, ai_answer, posted } = formData;
   try {
-    await supabase.from("articles").update({ title, tag, main_text, ai_answer, posted }).eq("id", id);
+    const { data } = await supabase
+      .from("articles")
+      .insert({ title, tag, main_text, ai_answer, posted, updated_at: new Date() })
+      .select("*");
+    return (data![0] as ArticleType).id;
+  } catch (e) {
+    console.error(e);
+    throw new Error("記事の登録で不正なエラーが発生しました。");
+  }
+};
+
+// 記事の更新
+const updateArticle = async (formData: ArticleFormType) => {
+  const { id, title, tag, main_text, ai_answer, posted } = formData;
+  try {
+    await supabase
+      .from("articles")
+      .update({ title, tag, main_text, ai_answer, posted, updated_at: new Date() })
+      .eq("id", id);
   } catch (e) {
     console.error(e);
     throw new Error("記事の更新で不正なエラーが発生しました。");
@@ -65,7 +84,7 @@ const registQiitaAPIKey = async (token: string) => {
     if (!data) {
       await supabase.from("api_tokens").insert({ token });
     } else {
-      await supabase.from("api_tokens").update({ token }).order("created_at", { ascending: false }).limit(1);
+      await supabase.from("api_tokens").update({ token }).eq("id", data.id);
     }
   } catch (e) {
     console.error(e);
@@ -79,5 +98,6 @@ export const DB = {
   fetchArticleFromId,
   deleteArticle,
   fetchQiitaAPIKey,
+  insertArticle,
   updateArticle,
 };
