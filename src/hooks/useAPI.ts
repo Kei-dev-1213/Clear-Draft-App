@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ArticleFormType } from "../domain/article";
+import { ArticleFormType } from "../domain/Article";
 import { DB } from "../supabase";
 import { Util } from "../util";
 

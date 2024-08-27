@@ -2,7 +2,7 @@ import { FC, memo } from "react";
 import * as UI from "@chakra-ui/react";
 
 import { Util } from "../../../util";
-import { ArticleType } from "../../../domain/article";
+import { ArticleType } from "../../../domain/Article";
 import { ArticleRowContent } from "./ArticleRowContent";
 
 type Props = {

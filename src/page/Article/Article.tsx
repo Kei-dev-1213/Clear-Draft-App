@@ -23,7 +23,7 @@ import { useAPI } from "../../hooks/useAPI";
 import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
-import { InquiryOption } from "../../domain/enum";
+import { InquiryOption } from "../../domain/Enum";
 
 // ハイライトの設定
 const renderer = new marked.Renderer();
@@ -109,9 +109,15 @@ export const Article: FC = memo(() => {
 
   // 保存ボタン押下
   const onClickUpdate = async () => {
+    // チェック
+    if (formData.tag.split(" ").length > 5) {
+      displayMessage({ title: "タグは5個以内で入力してください", status: "error" });
+      return;
+    }
+
     const newId = await registArticle(isUpdateArticle, formData);
     displayMessage({ title: "保存しました。", status: "success" });
-    // 新規登録のみ開き直す
+    // 新規登録時のみ開き直す
     newId && navigate(`/article/${newId}`);
   };
 
@@ -120,6 +126,10 @@ export const Article: FC = memo(() => {
     // チェック
     if (!formData.title || !formData.tag || !formData.main_text) {
       displayMessage({ title: "入力項目は全て必須です。", status: "error" });
+      return;
+    }
+    if (formData.tag.split(" ").length > 5) {
+      displayMessage({ title: "タグは5個以内で入力してください", status: "error" });
       return;
     }
     // 正常
@@ -139,7 +149,7 @@ export const Article: FC = memo(() => {
     const newId = await registArticle(isUpdateArticle, formData);
     await refreshArticle();
     displayMessage({ title: "記事の投稿が完了しました。", status: "success" });
-    // 新規登録のみ開き直す
+    // 新規登録時のみ開き直す
     newId && navigate(`/article/${newId}`);
   };
 
@@ -156,8 +166,7 @@ export const Article: FC = memo(() => {
     }
     // 正常
     aiModal.onClose();
-
-    //
+    // スクロール
     openAiAnswerAccordion();
     scrollToBottom();
   };

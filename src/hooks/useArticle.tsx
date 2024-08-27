@@ -1,4 +1,4 @@
-import { ArticleFormType } from "../domain/article";
+import { ArticleFormType } from "../domain/Article";
 import { DB } from "../supabase";
 
 export const useArticle = () => {

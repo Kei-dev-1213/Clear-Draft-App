@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
 
 import { CustomButton } from "../parts/CustomButton";
-import { ArticleType } from "../../../domain/article";
+import { ArticleType } from "../../../domain/Article";
 
 type Props = {
   article: ArticleType;
@@ -23,7 +23,7 @@ export const ArticleRowContent: FC<Props> = memo(({ article, onOpenDeleteModal }
       </UI.Text>
       <UI.UnorderedList display="flex" styleType="none" m={0} mt={4} gap={3}>
         {tag ? (
-          tag.split(" ").map((tag, index) => (
+          tag.split(" ").map((tag: string, index: number) => (
             <UI.ListItem
               key={`${tag}-${index}`}
               fontSize={15}
