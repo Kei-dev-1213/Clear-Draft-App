@@ -9,6 +9,7 @@ jobs:
       VITE_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
       VITE_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
       VITE_ENCRYPTION_KEY: ${{secrets.ENCRYPTION_KEY}}
+      VITE_GOOGLE_GEMINI_API_KEY: ${{secrets.GOOGLE_GEMINI_API_KEY}}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
