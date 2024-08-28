@@ -177,7 +177,7 @@ export const Article: FC = memo(() => {
     const timeoutId = setTimeout(() => {
       scrollToBottom();
       clearTimeout(timeoutId);
-    }, 1);
+    }, 10);
 
     // AIへのリクエスト
     const responseText = await requestToGemini(formData, inquiryText, inquiryOption);
