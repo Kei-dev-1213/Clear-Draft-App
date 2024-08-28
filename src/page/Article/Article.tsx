@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useRef, useState } from "react";
+import { FC, memo, MouseEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
@@ -44,6 +44,9 @@ export const Article: FC = memo(() => {
   const [isUpdateArticle, setIsUpdateArticle] = useState(false);
   const [prevHtmlContent, setPrevHtmlContent] = useState("");
   const [loading, setLoading] = useState(true);
+  const [aiAnswerloading, setAiAnswerloading] = useState(false);
+  const [accordionIndex, setAccordionIndex] = useState<number | null>(null);
+  const [displayedText, setDisplayedText] = useState("");
   const { formData, setFormData, handleChange } = useArticleForm({
     id: "",
     title: "",
@@ -58,7 +61,7 @@ export const Article: FC = memo(() => {
   const navigate = useNavigate();
   const postModal = UI.useDisclosure();
   const aiModal = UI.useDisclosure();
-  const { postToQiita } = useAPI();
+  const { postToQiita, requestToGemini } = useAPI();
   const { fetchArticleFromId, registArticle } = useArticle();
 
   // 初期処理
@@ -76,13 +79,6 @@ export const Article: FC = memo(() => {
   }, [formData.main_text]);
 
   // functions
-  // 画面一番下までスクロール
-  const scrollToBottom = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   // 初期表示
   const refreshArticle = async () => {
     // URLパラメータから記事の取得
@@ -144,7 +140,6 @@ export const Article: FC = memo(() => {
     }
     // 正常
     postModal.onClose();
-    setLoading(true);
     try {
       // 投稿
       await postToQiita(formData, scope === "private" ? true : false);
@@ -152,7 +147,6 @@ export const Article: FC = memo(() => {
       // 失敗
       console.error("Qiitaへの投稿が出来ませんでした。", e);
       displayMessage({ title: "Qiitaへの投稿が出来ませんでした。", status: "error" });
-      setLoading(false);
       return;
     }
     // 投稿完了時に保存と画面更新
@@ -166,7 +160,7 @@ export const Article: FC = memo(() => {
   //  リクエストボタン押下
   const onClickRequest = async (inquiryText: string, inquiryOption: InquiryOption) => {
     // チェック
-    if (Number(inquiryOption) === InquiryOption.Other && !inquiryText) {
+    if (inquiryOption === InquiryOption.Other && !inquiryText) {
       displayMessage({ title: "問い合わせ内容を入力してください。", status: "error" });
       return;
     }
@@ -176,13 +170,47 @@ export const Article: FC = memo(() => {
     }
     // 正常
     aiModal.onClose();
-    // スクロール
-    openAiAnswerAccordion();
-    scrollToBottom();
+    setAiAnswerloading(true);
+    // アコーディオンオープン&スクロール
+    // ※アニメーション後にスクロールさせたいのでsetTimeout内で実行
+    setAccordionIndex(0);
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+      clearTimeout(timeoutId);
+    }, 1);
+
+    // AIへのリクエスト
+    const responseText = await requestToGemini(formData, inquiryText, inquiryOption);
+    // 生成結果をサニタイズ
+    const parsedResponseText = await marked(responseText);
+    handleChange("ai_answer", DOMPurify.sanitize(parsedResponseText));
+    setAiAnswerloading(false);
+    console.log(parsedResponseText);
+
+    // 1文字ずつ表示する
+    setDisplayedText("");
+    let index = -1;
+    const intervalId = setInterval(() => {
+      setDisplayedText((prev) => prev + parsedResponseText[index]);
+      index++;
+      if (index >= parsedResponseText.length - 1) {
+        clearInterval(intervalId);
+      }
+    }, 5);
   };
 
-  // 生成AIの回答ボタン押下
-  const openAiAnswerAccordion = () => accordionButtonRef.current!.click();
+  // 生成AIの回答アコーディオン開閉ボタン押下
+  const toggleAiAnswerAccordion = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setAccordionIndex((prev) => (prev === 0 ? null : 0));
+  };
+
+  // 画面一番下までスクロール
+  const scrollToBottom = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // ページ離脱時の警告
   useEffect(() => {
@@ -242,8 +270,11 @@ export const Article: FC = memo(() => {
             </UI.Flex>
             <AiAnswerAccordion
               accordionRef={accordionRef}
-              aiAnswerText={formData.ai_answer}
+              aiAnswerText={displayedText}
               accordionButtonRef={accordionButtonRef}
+              accordionIndex={accordionIndex}
+              toggleAiAnswerAccordion={toggleAiAnswerAccordion}
+              aiAnswerloading={aiAnswerloading}
             />
             <Footer />
             <div ref={bottomRef} />

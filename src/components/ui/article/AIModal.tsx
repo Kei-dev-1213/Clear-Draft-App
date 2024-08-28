@@ -29,13 +29,13 @@ export const AIModal: FC<Props> = memo(({ isOpen, onClose, onClickRequest }) => 
         <UI.ModalCloseButton />
         <UI.ModalBody pb={6}>
           <UI.FormControl mb={5}>
-            <UI.FormLabel>問い合わせ</UI.FormLabel>
-            <UI.Select value={option} onChange={(e) => setOption(e.target.value as unknown as InquiryOption)}>
+            <UI.FormLabel>問い合わせ内容</UI.FormLabel>
+            <UI.Select value={option} onChange={(e) => setOption(Number(e.target.value))}>
               <option value={InquiryOption.GetAdvice}>記事のアドバイスを求める</option>
               <option value={InquiryOption.Other}>その他問い合わせ</option>
             </UI.Select>
           </UI.FormControl>
-          {Number(option) === InquiryOption.Other && (
+          {option === InquiryOption.Other && (
             <UI.FormControl mb={5}>
               <UI.FormLabel>問い合わせ内容</UI.FormLabel>
               <UI.Textarea

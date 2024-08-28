@@ -4,7 +4,7 @@ import * as UI from "@chakra-ui/react";
 
 export const LoadingSpinner: FC = memo(() => {
   return (
-    <UI.Flex h="100%" alignItems="center">
+    <UI.Flex h="100%" w="100%" alignItems="center" justifyContent="center">
       <Spinner thickness="4px" speed="0.65s" color="teal.500" size="xl" />
     </UI.Flex>
   );
