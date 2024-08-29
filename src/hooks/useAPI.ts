@@ -2,7 +2,7 @@ import axios from "axios";
 import { ArticleFormType } from "../domain/Article";
 import { DB } from "../supabase";
 import { Util } from "../util";
-import { InquiryOption } from "../domain/enum";
+import { InquiryOption } from "../domain/Enum";
 import queryJson from "./ai.queryText.json";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 

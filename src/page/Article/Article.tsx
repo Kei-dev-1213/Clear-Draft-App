@@ -20,7 +20,7 @@ import { useAPI } from "../../hooks/useAPI";
 import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
-import { InquiryOption } from "../../domain/enum";
+import { InquiryOption, PostOption } from "../../domain/Enum";
 import { Util } from "../../util";
 
 export const Article: FC = memo(() => {
@@ -59,13 +59,11 @@ export const Article: FC = memo(() => {
 
   // プレビュー文言のサニタイズ
   useEffect(() => {
-    const parseMarkdown = async () => {
+    (async () => {
       setPrevHtmlContent(await Util.sanitize(formData.main_text));
-    };
-    parseMarkdown();
+    })();
   }, [formData.main_text]);
 
-  // functions
   // 初期表示
   const refreshArticle = async () => {
     // URLパラメータから記事の取得
@@ -115,7 +113,7 @@ export const Article: FC = memo(() => {
   };
 
   // 投稿ボタン押下
-  const onClickPost = async (scope: string) => {
+  const onClickPost = async (scope: PostOption) => {
     // チェック
     if (Util.validateRequireInputs(formData)) {
       displayMessage({ title: "入力項目は全て必須です。", status: "error" });
@@ -129,7 +127,7 @@ export const Article: FC = memo(() => {
     postModal.onClose();
     try {
       // 投稿
-      await postToQiita(formData, scope === "private" ? true : false);
+      await postToQiita(formData, scope === PostOption.Private ? true : false);
     } catch (e) {
       // 失敗
       console.error("Qiitaへの投稿が出来ませんでした。", e);
@@ -164,7 +162,7 @@ export const Article: FC = memo(() => {
     const timeoutId = setTimeout(() => {
       bottomRef.current!.scrollIntoView({ behavior: "smooth" });
       clearTimeout(timeoutId);
-    }, 10);
+    }, 30);
 
     // AIへのリクエスト
     const responseText = await requestToGemini(formData, inquiryText, inquiryOption);

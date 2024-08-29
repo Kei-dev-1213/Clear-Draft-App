@@ -1,20 +1,21 @@
 import { FC, memo, useEffect, useState } from "react";
 import * as UI from "@chakra-ui/react";
+import { PostOption } from "../../../domain/Enum";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onClickPost: (scope: string) => Promise<void>;
+  onClickPost: (scope: PostOption) => Promise<void>;
 };
 
 export const PostModal: FC<Props> = memo(({ isOpen, onClose, onClickPost }) => {
   // state
-  const [scope, setScope] = useState("public");
+  const [scope, setScope] = useState(PostOption.Public);
 
   // 初期処理
   useEffect(() => {
     if (isOpen) {
-      setScope("public");
+      setScope(PostOption.Public);
     }
   }, [isOpen]);
 
@@ -27,9 +28,9 @@ export const PostModal: FC<Props> = memo(({ isOpen, onClose, onClickPost }) => {
         <UI.ModalBody pb={6}>
           <UI.FormControl mb={5}>
             <UI.FormLabel>公開範囲</UI.FormLabel>
-            <UI.Select value={scope} onChange={(e) => setScope(e.target.value)}>
-              <option value="public">全体に公開</option>
-              <option value="private">限定共有</option>
+            <UI.Select value={scope} onChange={(e) => setScope(Number(e.target.value))}>
+              <option value={PostOption.Public}>全体に公開</option>
+              <option value={PostOption.Private}>限定共有</option>
             </UI.Select>
           </UI.FormControl>
         </UI.ModalBody>
