@@ -40,7 +40,7 @@ export const ArticleTable: FC<Props> = memo(({ articles, onOpenDeleteModal, draf
           {articles
             .filter(({ posted }) => (draftOnly ? !posted === draftOnly : true))
             .map((article) => (
-              <UI.Tr key={article.id}>
+              <UI.Tr key={article.id} _hover={{ bg: "gray.100" }} transition="all 0.3s ease">
                 <UI.Td>
                   <ArticleRowContent article={article} onOpenDeleteModal={onOpenDeleteModal} />
                 </UI.Td>

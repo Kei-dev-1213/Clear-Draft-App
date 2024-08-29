@@ -1,8 +1,22 @@
 import CryptoJS from "crypto-js";
-import { ArticleFormType } from "../domain/Article";
+import highlightjs from "highlight.js";
+import { marked } from "marked";
 
+import { ArticleFormType } from "../domain/Article";
+import DOMPurify from "dompurify";
+
+// 暗号化秘密鍵
 const ENCRYPTION_KEY = process.env.VITE_ENCRYPTION_KEY!;
 const IV_LENGTH = 16;
+
+// コードハイライト
+const renderer = new marked.Renderer();
+renderer.code = ({ text }: { text: string }) => {
+  return highlightjs.highlightAuto(text).value;
+};
+marked.setOptions({
+  renderer,
+});
 
 // 暗号化
 const encrypt = (text: string) => {
@@ -52,10 +66,31 @@ const validateTagsNum = (tag: string) => {
   }
 };
 
+// 1文字ずつ表示
+const displayTextOneByOne = (text: string, setText: (value: React.SetStateAction<string>) => void) => {
+  setText("");
+  let index = -1;
+  const intervalId = setInterval(() => {
+    setText((prev) => prev + text[index]);
+    index++;
+    if (index >= text.length - 1) {
+      clearInterval(intervalId);
+    }
+  }, 5);
+};
+
+// 文字列のサニタイズ
+const sanitize = async (text: string) => {
+  const parsedHtml = await marked(text);
+  return DOMPurify.sanitize(parsedHtml);
+};
+
 export const Util = {
   encrypt,
   decrypt,
   formatDate,
   validateRequireInputs,
   validateTagsNum,
+  displayTextOneByOne,
+  sanitize,
 };

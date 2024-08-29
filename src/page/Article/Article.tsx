@@ -1,8 +1,5 @@
 import { FC, memo, MouseEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
-import highlightjs from "highlight.js";
 import "easymde/dist/easymde.min.css";
 import "highlight.js/styles/github.css";
 import * as UI from "@chakra-ui/react";
@@ -25,15 +22,6 @@ import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
 import { InquiryOption } from "../../domain/enum";
 import { Util } from "../../util";
-
-// ハイライトの設定
-const renderer = new marked.Renderer();
-renderer.code = ({ text }: { text: string }) => {
-  return highlightjs.highlightAuto(text).value;
-};
-marked.setOptions({
-  renderer,
-});
 
 export const Article: FC = memo(() => {
   const { id } = useParams();
@@ -72,8 +60,7 @@ export const Article: FC = memo(() => {
   // プレビュー文言のサニタイズ
   useEffect(() => {
     const parseMarkdown = async () => {
-      const parsedHtml = await marked(formData.main_text);
-      setPrevHtmlContent(DOMPurify.sanitize(parsedHtml));
+      setPrevHtmlContent(await Util.sanitize(formData.main_text));
     };
     parseMarkdown();
   }, [formData.main_text]);
@@ -171,45 +158,28 @@ export const Article: FC = memo(() => {
     // 正常
     aiModal.onClose();
     setAiAnswerloading(true);
-    // アコーディオンオープン&スクロール
-    // ※アニメーション後にスクロールさせたいのでsetTimeout内で実行
+    // アコーディオンオープン
     setAccordionIndex(0);
+    // ※アニメーション後にスクロールさせたいのでsetTimeout内でスクロール実行
     const timeoutId = setTimeout(() => {
-      scrollToBottom();
+      bottomRef.current!.scrollIntoView({ behavior: "smooth" });
       clearTimeout(timeoutId);
     }, 10);
 
     // AIへのリクエスト
     const responseText = await requestToGemini(formData, inquiryText, inquiryOption);
     // 生成結果をサニタイズ
-    const parsedResponseText = await marked(responseText);
-    handleChange("ai_answer", DOMPurify.sanitize(parsedResponseText));
+    const parsedResponseText = await Util.sanitize(responseText);
+    handleChange("ai_answer", parsedResponseText);
     setAiAnswerloading(false);
-    console.log(parsedResponseText);
-
-    // 1文字ずつ表示する
-    setDisplayedText("");
-    let index = -1;
-    const intervalId = setInterval(() => {
-      setDisplayedText((prev) => prev + parsedResponseText[index]);
-      index++;
-      if (index >= parsedResponseText.length - 1) {
-        clearInterval(intervalId);
-      }
-    }, 5);
+    // 文字列を画面上に1文字ずつ表示
+    Util.displayTextOneByOne(parsedResponseText, setDisplayedText);
   };
 
   // 生成AIの回答アコーディオン開閉ボタン押下
   const toggleAiAnswerAccordion = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setAccordionIndex((prev) => (prev === 0 ? null : 0));
-  };
-
-  // 画面一番下までスクロール
-  const scrollToBottom = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   // ページ離脱時の警告
