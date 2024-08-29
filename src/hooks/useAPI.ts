@@ -1,8 +1,8 @@
 import axios from "axios";
-import { ArticleFormType } from "../domain/Article";
+import { ArticleFormType } from "../domain/articleTypes";
 import { DB } from "../supabase";
 import { Util } from "../util";
-import { InquiryOption } from "../domain/Enum";
+import { InquiryOption } from "../domain/enumTypes";
 import queryJson from "./ai.queryText.json";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 

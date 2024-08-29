@@ -1,6 +1,6 @@
 import { FC, memo, useEffect, useState } from "react";
 import * as UI from "@chakra-ui/react";
-import { InquiryOption } from "../../../domain/enum";
+import { InquiryOption } from "../../../domain/enumTypes";
 
 type Props = {
   isOpen: boolean;

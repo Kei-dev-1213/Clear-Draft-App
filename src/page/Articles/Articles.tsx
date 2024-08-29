@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ContentWrapper } from "../../components/ui/container/ContentWrapper";
 import { CONSTANT } from "../../constant";
 import { CustomButton } from "../../components/ui/parts/CustomButton";
-import { ArticleType } from "../../domain/Article";
+import { ArticleType } from "../../domain/articleTypes";
 import { useMessage } from "../../hooks/useMessage";
 import { LoadingSpinner } from "../../components/ui/loading/LoadingSpinner";
 import { DeleteDialog } from "../../components/ui/articles/DeleteDialog";

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
 
 import { CustomButton } from "../parts/CustomButton";
-import { ArticleType } from "../../../domain/Article";
+import { ArticleType } from "../../../domain/articleTypes";
 
 type Props = {
   article: ArticleType;

@@ -20,7 +20,7 @@ import { useAPI } from "../../hooks/useAPI";
 import { useArticle } from "../../hooks/useArticle";
 import { useArticleForm } from "../../hooks/useArticleForm";
 import { AIModal } from "../../components/ui/article/AIModal";
-import { InquiryOption, PostOption } from "../../domain/Enum";
+import { InquiryOption, PostOption } from "../../domain/enumTypes";
 import { Util } from "../../util";
 
 export const Article: FC = memo(() => {

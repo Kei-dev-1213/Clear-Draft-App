@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 import highlightjs from "highlight.js";
 import { marked } from "marked";
 
-import { ArticleFormType } from "../domain/Article";
+import { ArticleFormType } from "../domain/articleTypes";
 import DOMPurify from "dompurify";
 
 // 暗号化秘密鍵
