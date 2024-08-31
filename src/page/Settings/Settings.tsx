@@ -56,6 +56,7 @@ export const Settings: FC = memo(() => {
                 <FaLock />
               </UI.InputLeftAddon>
               <UI.Input
+                data-testid="qiita-api-input"
                 {...register("token", { required: "Qiita API キーの入力は必須です" })}
                 variant="flushed"
                 placeholder="Qiita APIキーを入力してください"

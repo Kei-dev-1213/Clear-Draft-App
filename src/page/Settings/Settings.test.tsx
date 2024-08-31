@@ -1,15 +1,32 @@
 import "@testing-library/jest-dom";
-import { waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { Settings } from "./Settings";
+
+jest.mock("../../supabase", () => ({
+  DB: {
+    registQiitaAPIKey: jest.fn(),
+  },
+}));
 
 /*
  * 設定画面のテスト
  */
-describe("サンプルテスト", () => {
-  test("[正常系]サンプルテスト", async () => {
+describe("初期表示テスト", () => {
+  test("[正常系]入力項目が空であること", async () => {
     // 実行
-    // render(<App />);
-
+    render(<Settings />);
     // 検証
-    waitFor(() => {});
+    const apiInput = screen.getByTestId("qiita-api-input");
+    expect(apiInput).toHaveValue("");
+  });
+});
+
+describe("登録テスト", () => {
+  test("[正常系]入力項目が空であること", async () => {
+    // 実行
+    render(<Settings />);
+    // 検証
+    const apiInput = screen.getByTestId("qiita-api-input");
+    expect(apiInput).toHaveValue("");
   });
 });
