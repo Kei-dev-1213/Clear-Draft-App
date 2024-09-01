@@ -3,6 +3,7 @@ import * as UI from "@chakra-ui/react";
 import { IconType } from "react-icons/lib";
 
 type Props = {
+  dataTestid: string;
   children: ReactNode;
   icon: IconType;
   color: string;
@@ -10,11 +11,12 @@ type Props = {
   isLoading?: boolean;
 };
 
-export const CustomButton: FC<Props> = memo(({ children, icon: Icon, color, onClick, isLoading }) => {
+export const CustomButton: FC<Props> = memo(({ dataTestid, children, icon: Icon, color, onClick, isLoading }) => {
   return (
     <>
       <UI.Button
         type="submit"
+        data-testid={dataTestid}
         px={4}
         colorScheme={color}
         display="flex"

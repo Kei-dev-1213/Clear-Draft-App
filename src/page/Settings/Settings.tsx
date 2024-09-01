@@ -63,7 +63,12 @@ export const Settings: FC = memo(() => {
                 px={2}
               />
             </UI.InputGroup>
-            <CustomButton icon={MdOutlineAppRegistration} color="blue" isLoading={isRegistering}>
+            <CustomButton
+              dataTestid="regist-button"
+              icon={MdOutlineAppRegistration}
+              color="blue"
+              isLoading={isRegistering}
+            >
               登録
             </CustomButton>
           </UI.Flex>
