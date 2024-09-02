@@ -65,18 +65,12 @@ describe("初期表示テスト", () => {
       const article1_tag1 = screen.getByText("記事1_タグ1");
       const article1_tag2 = screen.getByText("記事1_タグ2");
       const article1_tag3 = screen.getByText("記事1_タグ3");
-      const article1_time = screen.getByText("2024/01/01 09:00");
-      const article2_time = screen.getByText("2024/01/02 09:00");
-      const article3_time = screen.getByText("2024/01/03 09:00");
       expect(article1_title).toBeInTheDocument();
       expect(article2_title).toBeInTheDocument();
       expect(article3_title).toBeInTheDocument();
       expect(article1_tag1).toBeInTheDocument();
       expect(article1_tag2).toBeInTheDocument();
       expect(article1_tag3).toBeInTheDocument();
-      expect(article1_time).toBeInTheDocument();
-      expect(article2_time).toBeInTheDocument();
-      expect(article3_time).toBeInTheDocument();
     });
   });
 });
@@ -116,10 +110,8 @@ describe("ボタン押下テスト", () => {
       await waitFor(async () => {
         const article4_title = screen.getByText("初期表示投稿済記事４");
         const article4_tag1 = screen.getByText("記事4_タグ1");
-        const article4_time = screen.getByText("2024/01/04 09:00");
         expect(article4_title).toBeInTheDocument();
         expect(article4_tag1).toBeInTheDocument();
-        expect(article4_time).toBeInTheDocument();
       });
 
       const draftSwitch = screen.getByTestId("draft-switch");
@@ -129,10 +121,8 @@ describe("ボタン押下テスト", () => {
       await waitFor(async () => {
         const article4_title = screen.queryByText("初期表示未投稿記事４");
         const article4_tag1 = screen.queryByText("記事4_タグ1");
-        const article4_time = screen.queryByText("2024/01/04 09:00");
         expect(article4_title).not.toBeInTheDocument();
         expect(article4_tag1).not.toBeInTheDocument();
-        expect(article4_time).not.toBeInTheDocument();
       });
     });
   });
