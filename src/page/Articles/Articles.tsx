@@ -62,7 +62,12 @@ export const Articles: FC = memo(() => {
         ) : (
           <UI.Box w="100%" h="80%">
             <UI.Box display="flex" justifyContent="flex-end" mb={4}>
-              <CustomButton icon={GiArchiveRegister} color="blue" onClick={() => navigate("/article/0")}>
+              <CustomButton
+                dataTestid="add-article-button"
+                icon={GiArchiveRegister}
+                color="blue"
+                onClick={() => navigate("/article/0")}
+              >
                 新規登録
               </CustomButton>
             </UI.Box>
@@ -74,7 +79,13 @@ export const Articles: FC = memo(() => {
                 isChecked={draftOnly}
                 onChange={() => setDraftOnly(!draftOnly)}
               />
-              <UI.FormLabel htmlFor="draft-only" mb="0" fontSize={14} _hover={{ cursor: "pointer" }}>
+              <UI.FormLabel
+                data-testid="draft-switch"
+                htmlFor="draft-only"
+                mb="0"
+                fontSize={14}
+                _hover={{ cursor: "pointer" }}
+              >
                 未投稿の下書きのみ表示
               </UI.FormLabel>
             </UI.FormControl>

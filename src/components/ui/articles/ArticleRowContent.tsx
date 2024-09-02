@@ -37,10 +37,20 @@ export const ArticleRowContent: FC<Props> = memo(({ article, onOpenDeleteModal }
         )}
       </UI.UnorderedList>
       <UI.Box display="flex" gap={3} position="absolute" bottom={0} right={0}>
-        <CustomButton icon={FaEdit} color="green" onClick={() => navigate(`/article/${id}`, { state: { article } })}>
+        <CustomButton
+          dataTestid="edit-article-button"
+          icon={FaEdit}
+          color="green"
+          onClick={() => navigate(`/article/${id}`)}
+        >
           編集
         </CustomButton>
-        <CustomButton icon={FaRegTrashAlt} color="red" onClick={() => onOpenDeleteModal(id)}>
+        <CustomButton
+          dataTestid="delete-article-button"
+          icon={FaRegTrashAlt}
+          color="red"
+          onClick={() => onOpenDeleteModal(id)}
+        >
           削除
         </CustomButton>
       </UI.Box>

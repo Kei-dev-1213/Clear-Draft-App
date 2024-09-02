@@ -3,7 +3,7 @@ import * as UI from "@chakra-ui/react";
 import { IconType } from "react-icons/lib";
 
 type Props = {
-  dataTestid: string;
+  dataTestid?: string;
   children: ReactNode;
   icon: IconType;
   color: string;
