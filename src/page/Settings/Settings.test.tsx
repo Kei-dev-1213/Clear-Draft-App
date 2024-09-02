@@ -6,16 +6,6 @@ import { LoadingProvider } from "../../context/LoadingProvider";
 import { DB } from "../../supabase";
 
 // モック化
-jest.mock("../../context/LoadingProvider", () => {
-  const originalModule = jest.requireActual("../../context/LoadingProvider");
-  return {
-    __esModule: true,
-    ...originalModule,
-    ParentContext: {
-      _currentValue: { value1: "mockValue1", value2: "mockValue2" },
-    },
-  };
-});
 jest.mock("../../supabase", () => ({
   DB: {
     registQiitaAPIKey: jest.fn(),
