@@ -80,6 +80,9 @@ const displayTextOneByOne = (text: string, setText: (value: React.SetStateAction
 
 // 文字列のサニタイズ
 const sanitize = async (text: string) => {
+  if (typeof text !== "string") {
+    throw new Error("Input parameter is not a string");
+  }
   const parsedHtml = await marked(text);
   return DOMPurify.sanitize(parsedHtml);
 };

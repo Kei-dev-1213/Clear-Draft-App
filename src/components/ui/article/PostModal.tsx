@@ -36,7 +36,7 @@ export const PostModal: FC<Props> = memo(({ isOpen, onClose, onClickPost }) => {
         </UI.ModalBody>
 
         <UI.ModalFooter>
-          <UI.Button colorScheme="teal" mr={3} onClick={() => onClickPost(scope)}>
+          <UI.Button data-testid="post-to-qiita-button" colorScheme="teal" mr={3} onClick={() => onClickPost(scope)}>
             投稿する
           </UI.Button>
           <UI.Button onClick={onClose}>キャンセル</UI.Button>

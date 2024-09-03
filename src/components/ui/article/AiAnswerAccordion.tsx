@@ -18,6 +18,7 @@ export const AiAnswerAccordion: FC<Props> = memo(
       <UI.Accordion index={accordionIndex ?? undefined} allowToggle mb={4} ref={accordionRef}>
         <UI.AccordionItem>
           <UI.AccordionButton
+            data-testid="accordion-button"
             ref={accordionButtonRef}
             _expanded={{ bg: "tomato", color: "white" }}
             onClick={toggleAiAnswerAccordion}
@@ -34,7 +35,11 @@ export const AiAnswerAccordion: FC<Props> = memo(
             {aiAnswerloading ? (
               <LoadingSpinner />
             ) : (
-              <div className="ai-answer" dangerouslySetInnerHTML={{ __html: aiAnswerText }}></div>
+              <div
+                data-testid="ai-answer-content"
+                className="ai-answer"
+                dangerouslySetInnerHTML={{ __html: aiAnswerText }}
+              ></div>
             )}
           </UI.AccordionPanel>
         </UI.AccordionItem>

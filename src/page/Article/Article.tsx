@@ -200,19 +200,20 @@ export const Article: FC = memo(() => {
           <UI.Flex w="100%" flexDirection="column">
             <UI.Flex justifyContent="flex-end" mb={3}>
               <UI.HStack>
-                <CustomButton icon={FaRobot} color="blue" onClick={aiModal.onOpen}>
+                <CustomButton dataTestid="request-ai-button" icon={FaRobot} color="blue" onClick={aiModal.onOpen}>
                   生成AIに聞く
                 </CustomButton>
-                <CustomButton icon={GiArchiveRegister} color="red" onClick={onClickUpdate}>
+                <CustomButton dataTestid="regist-button" icon={GiArchiveRegister} color="red" onClick={onClickUpdate}>
                   保存する
                 </CustomButton>
-                <CustomButton icon={MdOutlinePostAdd} color="green" onClick={postModal.onOpen}>
+                <CustomButton dataTestid="post-button" icon={MdOutlinePostAdd} color="green" onClick={postModal.onOpen}>
                   投稿する
                 </CustomButton>
               </UI.HStack>
             </UI.Flex>
             <UI.Stack mb={2}>
               <UI.Input
+                data-testid="title-input"
                 name="title"
                 bg="white"
                 padding={4}
@@ -221,6 +222,7 @@ export const Article: FC = memo(() => {
                 onChange={(e) => handleChange(e.target.name, e.target.value)}
               />
               <UI.Input
+                data-testid="tag-input"
                 name="tag"
                 bg="white"
                 padding={4}

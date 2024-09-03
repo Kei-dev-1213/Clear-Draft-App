@@ -49,7 +49,12 @@ export const AIModal: FC<Props> = memo(({ isOpen, onClose, onClickRequest }) => 
         </UI.ModalBody>
 
         <UI.ModalFooter>
-          <UI.Button colorScheme="blue" mr={3} onClick={() => onClickRequest(inquiryText, option)}>
+          <UI.Button
+            data-testid="request-to-gemini-button"
+            colorScheme="blue"
+            mr={3}
+            onClick={() => onClickRequest(inquiryText, option)}
+          >
             送信する
           </UI.Button>
           <UI.Button onClick={onClose}>キャンセル</UI.Button>

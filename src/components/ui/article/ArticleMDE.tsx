@@ -12,7 +12,11 @@ export const ArticleMDE: FC<Props> = memo(({ articleMarkdownText, prevHtmlConten
   return (
     <>
       <SArticleEditDiv>
-        <SimpleMde value={articleMarkdownText} onChange={(value: string) => handleChange("main_text", value)} />
+        <SimpleMde
+          data-testid="simple-mde"
+          value={articleMarkdownText}
+          onChange={(value: string) => handleChange("main_text", value)}
+        />
       </SArticleEditDiv>
       <SArticlePrevDiv className="preview">
         <div dangerouslySetInnerHTML={{ __html: prevHtmlContent }}></div>
