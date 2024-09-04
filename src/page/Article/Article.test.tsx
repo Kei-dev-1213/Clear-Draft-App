@@ -5,6 +5,7 @@ import { Article } from "./Article";
 import { useParams } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
+import queryJson from "../../hooks/ai.queryText.json";
 
 const initialArticle = {
   title: "編集記事タイトル",
@@ -30,6 +31,19 @@ jest.mock("../../supabase", () => ({
     fetchQiitaAPIKey: jest.fn(),
   },
 }));
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+const generateContentMock = jest.fn().mockResolvedValue({
+  response: {
+    text: () => "生成AIの回答です。",
+  },
+});
+jest.mock("@google/generative-ai", () => ({
+  GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
+    getGenerativeModel: jest.fn().mockReturnValue({
+      generateContent: generateContentMock,
+    }),
+  })),
+}));
 
 /*
  * 記事編集画面のテスト
@@ -43,6 +57,8 @@ describe("初期表示テスト", () => {
     await act(async () => {
       render(<Article />);
     });
+
+    fireEvent.click(screen.getByTestId("accordion-button"));
 
     // 検証
     await waitFor(async () => {
@@ -132,6 +148,44 @@ describe("ボタン押下テスト", () => {
             title: "編集記事タイトル_編集後",
           },
           { headers: { Authorization: "Bearer ", "Content-Type": "application/json" } }
+        );
+      });
+    });
+  });
+
+  describe("生成AIに聞くボタン押下テスト", () => {
+    test("[正常系]正常にリクエスト処理が実行されること", async () => {
+      // モック化
+      (useParams as jest.Mock).mockReturnValue("1");
+      (DB.fetchArticleFromId as jest.Mock).mockResolvedValue(initialArticle);
+      (DB.updateArticle as jest.Mock).mockResolvedValue(null);
+
+      // 実行
+      await act(async () => {
+        render(<Article />);
+      });
+
+      // 値書き換え
+      const titleInput = screen.getByTestId("title-input");
+      const tagInput = screen.getByTestId("tag-input");
+      await userEvent.clear(titleInput);
+      await userEvent.type(titleInput, "編集記事タイトル_編集後");
+      await userEvent.clear(tagInput);
+      await userEvent.type(tagInput, "編集記事タグ");
+
+      // 生成AIに聞く
+      const requestAiButton = screen.getByTestId("request-ai-button");
+      fireEvent.click(requestAiButton);
+      await waitFor(() => {
+        fireEvent.click(screen.getByTestId("request-to-gemini-button"));
+      });
+
+      // 検証
+      await waitFor(async () => {
+        expect(generateContentMock).toHaveBeenCalledWith(
+          queryJson.advice_template_query_text
+            .replace("$title", "編集記事タイトル_編集後")
+            .replace("$main_text", "# メイン記事の内容です。")
         );
       });
     });
