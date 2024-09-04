@@ -79,6 +79,7 @@ export const Article: FC = memo(() => {
           ai_answer,
           posted,
         });
+        setDisplayedText(await Util.sanitize(main_text));
         setIsUpdateArticle(true);
       } else {
         // URLのIdから記事を取得不可
