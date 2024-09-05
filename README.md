@@ -1,7 +1,9 @@
 # Clear Draft
 
 <img src="./assets/Clear Draft.png">
+
 ## Summary
+
 To streamline the writing of technical articles, this app integrates AI-generated improvements and advice, a Markdown editor, and direct posting to Qiita.
 USAGE
 
