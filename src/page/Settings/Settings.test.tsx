@@ -29,7 +29,6 @@ describe("登録テスト", () => {
   test("[正常系]登録処理が正常に動作すること", async () => {
     // 実行
     render(<Settings />, { wrapper: LoadingProvider });
-
     // 入力
     const token = "test-api-key";
     const apiInput = screen.getByTestId("qiita-api-input");
