@@ -31,7 +31,6 @@ npm i
 npm run dev
 ```
 ## Specification
-### Using Clear Draft App
 
 #### Introduction
 Clear Draft is an app designed to streamline the process of creating and posting technical articles. This app leverages AI to improve and advise on article content, integrates a Markdown editor, and allows direct posting to Qiita.
