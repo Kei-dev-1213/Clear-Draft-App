@@ -1,0 +1,20 @@
+{
+  "howToUseForGit": {
+    "title": "Gitの基本的な使い方",
+    "tag": "Git エンジニア",
+    "posted": false,
+    "ai_answer": ""
+  },
+  "howToUseConsoleLog": {
+    "title": "console.logの使い方",
+    "tag": "console.log javascript",
+    "posted": false,
+    "ai_answer": ""
+  },
+  "howToWork": {
+    "title": "エンジニアの働き方",
+    "tag": "エンジニア ポエム",
+    "posted": true,
+    "ai_answer": ""
+  }
+}

@@ -51,7 +51,7 @@ const insertArticle = async (formData: ArticleFormType) => {
   }
 };
 
-// 記事の更新
+// デフォルト記事の登録
 const updateArticle = async (formData: ArticleFormType) => {
   const { id, title, tag, main_text, ai_answer, posted } = formData;
   try {
